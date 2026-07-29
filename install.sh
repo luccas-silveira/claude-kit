@@ -3,7 +3,7 @@
 # Uso:  ./install.sh          (ou)  bash <(curl -sL <raw-url-deste-arquivo>)
 set -euo pipefail
 
-REPO="${ZOI_KIT_REPO:-luccassilveira/claude-kit}"   # troque se o repo tiver outro nome
+REPO="${ZOI_KIT_REPO:-luccas-silveira/claude-kit}"   # troque se o repo tiver outro nome
 
 say() { printf '\n\033[1m==> %s\033[0m\n' "$1"; }
 

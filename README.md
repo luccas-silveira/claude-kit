@@ -7,13 +7,13 @@ nos transcripts, não por palpite).
 ## Instalar numa máquina nova
 
 ```bash
-git clone https://github.com/luccassilveira/claude-kit && bash claude-kit/install.sh
+git clone https://github.com/luccas-silveira/claude-kit && bash claude-kit/install.sh
 ```
 
 Ou só as skills próprias, sem clonar:
 
 ```
-/plugin marketplace add luccassilveira/claude-kit
+/plugin marketplace add luccas-silveira/claude-kit
 /plugin install zoi-skills@zoi-kit
 ```
 
