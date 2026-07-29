@@ -1,6 +1,6 @@
 {
   "name": "zoi-skills",
   "version": "1.0.0",
-  "description": "Skills próprias: GHL, atendimento, prompt engineering, design, pesquisa e rotina de sessão.",
+  "description": "Skills próprias: design, prompt engineering, pesquisa, debug e rotina de sessão.",
   "author": { "name": "luccassilveira" }
 }

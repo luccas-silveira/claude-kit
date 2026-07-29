@@ -19,22 +19,17 @@ Ou só as skills próprias, sem clonar:
 
 ## O que tem aqui
 
-`plugins/zoi-skills/skills/` — 15 skills próprias:
+`plugins/zoi-skills/skills/` — 9 skills próprias:
 
 | skill | pra quê |
 |---|---|
 | `fechar-sessao` | rotina de encerramento (gates, commit, handoff, memória) |
 | `ghl-api-docs` | referência offline da API GoHighLevel v3 |
-| `ghl-automation` | montar workflows no GHL via browser |
-| `processo-atendimento` | pipeline de análise de conversas/funil |
-| `prompt-engineering` | escrever e auditar system prompts |
-| `whatsapp-utility-templates` | templates WABA categoria Utility |
 | `impeccable`, `taste-skill` | frontend / design |
 | `graphify` | knowledge graph de qualquer input |
-| `gitnexus-cli`, `gitnexus-exploring` | navegar codebase em grafo |
+| `prompt-engineering` | escrever e auditar system prompts |
 | `root-cause` | achar e confirmar causa raiz antes de corrigir |
 | `research` | pesquisa preliminar estruturada |
-| `agent-model-policy` | qual modelo usar em cada subagente |
 | `supacode-cli` | controlar Supacode pelo terminal |
 
 ## Plugins de terceiros (o `install.sh` puxa)
