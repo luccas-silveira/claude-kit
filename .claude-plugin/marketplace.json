@@ -1,0 +1,11 @@
+{
+  "name": "zoi-kit",
+  "owner": { "name": "luccassilveira" },
+  "plugins": [
+    {
+      "name": "zoi-skills",
+      "source": "./plugins/zoi-skills",
+      "description": "Skills próprias: GHL, atendimento, prompt engineering, design, pesquisa e rotina de sessão."
+    }
+  ]
+}

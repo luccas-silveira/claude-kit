@@ -1,0 +1,31 @@
+{
+  "client": "NOME_DO_CLIENTE",
+  "ghl": {
+    "location_id": "XXXXXXXXXXXXXXXXXXXX",
+    "token_env": "GHL_TOKEN",
+    "months_back": 2,
+    "workers": 6,
+    "fetch_full_emails": true,
+    "include_system_messages": true
+  },
+  "objective": "process",
+  "cleaning": {
+    "min_turns": 3,
+    "ratio_max": 8,
+    "group_min": 10,
+    "sample_n": 25,
+    "channel_noise": ["Sistema", "Activity Appointment", "Internal Comment"],
+    "extra_scrub_patterns": []
+  },
+  "graph": { "chunks": 15 },
+  "judge": { "chunks": 11 },
+  "vocabulary": {
+    "products": [],
+    "stages": ["etapa_primeiro_contato", "etapa_qualificacao", "etapa_orcamento", "etapa_negociacao_pagamento", "etapa_fechamento", "etapa_pos_venda"],
+    "objections": ["objecao_preco", "objecao_sem_resposta"],
+    "payment": ["pagamento_financiamento", "pagamento_cartao", "pagamento_pix"],
+    "intents": ["intent_pedido_orcamento", "intent_interesse_produto"]
+  },
+  "domain_context": "Descreva a empresa, produtos/linhas, regiao, parceiros de pagamento e jargao. Os subagents usam isto para extrair com precisao.",
+  "output_dir": "."
+}
