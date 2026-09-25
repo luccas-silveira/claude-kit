@@ -41,7 +41,9 @@ Ou só as skills próprias, sem clonar:
 ## Terceiros (o `install.sh` puxa da fonte)
 
 Plugins: `superpowers`, `playwright`, `security-guidance`, `ponytail`, `watch`,
-`impeccable`, `caveman` (só subagentes e skills; a fala fica com o Seco), `headroom`.
+`impeccable`, `caveman` (só subagentes e skills; a fala fica com o Seco), `headroom`,
+`automaster` (MCP de auditoria e edição do GoHighLevel; repo privado da zoi-tech, só
+instala com acesso a ele e precisa de Python 3.12+).
 
 Skills avulsas: `archify` (tt-a1i/archify), `grill-me` e `wayfinder` (mattpocock/skills).
 

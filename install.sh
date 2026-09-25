@@ -13,7 +13,8 @@ command -v claude >/dev/null || { echo "Claude Code não encontrado no PATH."; e
 
 say "Adicionando marketplaces"
 for m in "$REPO" DietrichGebert/ponytail bradautomates/claude-video pbakaus/impeccable \
-         JuliusBrussee/caveman headroomlabs-ai/headroom; do
+         JuliusBrussee/caveman headroomlabs-ai/headroom \
+         zoi-tech/automaster_v2; do   # automaster: repo privado, só instala com acesso à zoi-tech
   claude plugin marketplace add "$m" || echo "  (já existe ou falhou: $m)"
 done
 
@@ -27,6 +28,7 @@ for p in \
   impeccable@impeccable \
   caveman@caveman \
   headroom@headroom-marketplace \
+  automaster@zoi \
   zoi-skills@zoi-kit
 do
   claude plugin install "$p" || echo "  (falhou: $p)"
@@ -65,6 +67,7 @@ mkdir -p "$HOME/.config/caveman"
 say "Falta fazer à mão"
 cat <<'EOF'
   headroom precisa do CLI:        uv tool install headroom-ai
+  automaster precisa de Python >= 3.12 (brew install python@3.12) e de acesso à zoi-tech.
   deja e graft instalam as próprias skills e hooks quando o CLI deles é instalado.
   MCP servers ficam fora (binário ou credencial local).
 EOF
