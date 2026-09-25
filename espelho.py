@@ -257,8 +257,31 @@ def instalar(args):
         projetos.setdefault(p, {})['mcpServers'] = servidores
     with open(caminho, 'w') as f:
         f.write(json.dumps(cj, indent=2, ensure_ascii=False) + '\n')
+
+    falhas = []  # etapa 6 soma repositórios e programas aqui
+    manifesto = ler_json(os.path.join(kit, 'manifesto.json'), {})
+    plugins(manifesto, falhas)
+    print('Os plugins do manifesto se instalam ao abrir o Claude Code.')
+    if falhas:
+        print('falha em:\n' + '\n'.join('  ' + f for f in falhas))
     print('snapshot: ' + snap)
     return 0
+
+
+def plugins(manifesto, falhas):
+    """Marketplace oficial garantido; plugins e marketplaces fora do manifesto saem."""
+    oficial = 'anthropics/claude-plugins-official'
+    if rodar(['claude', 'plugin', 'marketplace', 'add', oficial]) is None:
+        falhas.append(oficial)
+    ids = {p['id'] for p in manifesto.get('plugins', [])}
+    for p in json.loads(rodar(['claude', 'plugin', 'list', '--json']) or '[]'):
+        if p['id'] not in ids and rodar(['claude', 'plugin', 'uninstall', p['id']]) is None:
+            falhas.append(p['id'])
+    nomes = {m['nome'] for m in manifesto.get('marketplaces', [])} | {'claude-plugins-official'}
+    for m in json.loads(rodar(['claude', 'plugin', 'marketplace', 'list', '--json']) or '[]'):
+        if m['name'] not in nomes and rodar(
+                ['claude', 'plugin', 'marketplace', 'remove', m['name']]) is None:
+            falhas.append(m['name'])
 
 
 def limpar(destino, rel, cred):
