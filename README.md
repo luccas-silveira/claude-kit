@@ -47,9 +47,13 @@ instala com acesso a ele e precisa de Python 3.12+).
 
 Skills avulsas: `archify` (tt-a1i/archify), `grill-me` e `wayfinder` (mattpocock/skills).
 
+Ferramentas: `graft` (grafo de código, via npm, com o MCP registrado para todos os
+projetos) e `deja` (memória entre sessões, via brew ou o script oficial, seguido de
+`deja install --auto`).
+
 ## Fora do escopo
 
-`deja` e `graft` instalam as próprias skills e hooks junto com o CLI. `headroom` precisa do
+O `graft init` roda uma vez por repositório, à mão: indexa o código e liga os hooks. `headroom` precisa do
 CLI (`uv tool install headroom-ai`). MCP servers com binário ou credencial local, o
 `CLAUDE.md` global e a memória ficam de fora: são pessoais por máquina.
 

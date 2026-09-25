@@ -42,6 +42,20 @@ else
   echo "  npx ausente: archify, grill-me e wayfinder ficaram de fora."
 fi
 
+say "graft (grafo de código) e deja (memória entre sessões)"
+if command -v npm >/dev/null; then
+  command -v graft >/dev/null || npm i -g @nanonets/graft || echo "  (falhou: graft)"
+  command -v graft >/dev/null && { claude mcp add -s user graft -- graft mcp || echo "  (MCP do graft já existe ou falhou)"; }
+else
+  echo "  npm ausente: graft ficou de fora."
+fi
+if ! command -v deja >/dev/null; then
+  if command -v brew >/dev/null; then brew install deja-vu
+  else curl -fsSL https://raw.githubusercontent.com/vshulcz/deja-vu/main/install.sh | sh; fi || echo "  (falhou: deja)"
+fi
+DEJA="$(command -v deja || echo "$HOME/.local/bin/deja")"
+[ -x "$DEJA" ] && { "$DEJA" install --auto || echo "  (falhou: deja install)"; }
+
 say "Vesta, output style Seco e hooks"
 mkdir -p "$C/skills" "$C/commands" "$C/output-styles"
 rm -rf "$C/skills/vesta" && cp -R "$KIT/home/skills/vesta" "$C/skills/vesta"
@@ -68,7 +82,7 @@ say "Falta fazer à mão"
 cat <<'EOF'
   headroom precisa do CLI:        uv tool install headroom-ai
   automaster precisa de Python >= 3.12 (brew install python@3.12) e de acesso à zoi-tech.
-  deja e graft instalam as próprias skills e hooks quando o CLI deles é instalado.
+  graft: rode `graft init` uma vez em cada repositório para indexar e ligar os hooks.
   MCP servers ficam fora (binário ou credencial local).
 EOF
 
