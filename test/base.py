@@ -10,10 +10,18 @@ for _k in [k for k in os.environ if k.startswith('GIT_')]:
     del os.environ[_k]
 
 STUB = '''#!/bin/sh
-echo "$(basename "$0") $*" >> "$STUB_LOG"
-[ -f "$STUB_DIR/$(basename "$0").out" ] && cat "$STUB_DIR/$(basename "$0").out"
+n="$(basename "$0")"
+echo "$n $*" >> "$STUB_LOG"
+k="$STUB_DIR/$n@$(printf '%s' "$*" | tr ' /' '_%')"
+if [ -f "$k.out" ]; then cat "$k.out"; elif [ -f "$STUB_DIR/$n.out" ]; then cat "$STUB_DIR/$n.out"; fi
+[ -f "$k.rc" ] && exit "$(cat "$k.rc")"
 exit 0
 '''
+
+
+def chave(args):
+    """Nome do arquivo de resposta por argumentos: espaço vira _, / vira %."""
+    return args.replace(' ', '_').replace('/', '%')
 
 
 class Caso(unittest.TestCase):
@@ -40,6 +48,15 @@ class Caso(unittest.TestCase):
         if saida:
             with open(caminho + '.out', 'w') as f:
                 f.write(saida)
+
+    def resposta(self, nome, args, saida='', codigo=0):
+        """Resposta do stub só para `nome args` exatos; codigo != 0 faz o stub sair com ele."""
+        base = os.path.join(self.stubs, nome + '@' + chave(args))
+        with open(base + '.out', 'w') as f:
+            f.write(saida)
+        if codigo:
+            with open(base + '.rc', 'w') as f:
+                f.write(str(codigo))
 
     def _run(self, cmd, entrada=None):
         r = subprocess.run(cmd, cwd=self.home, env=self.env, capture_output=True, text=True,
