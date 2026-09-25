@@ -54,10 +54,12 @@ def barreiras(raiz, termos):
     return achados
 
 
-def rodar(cmd, mostrar_erro=False, cru=False):
-    """Roda um comando externo pelo PATH; devolve a saída se deu certo, senão None."""
+def rodar(cmd, mostrar_erro=False, cru=False, cwd=None):
+    """Roda um comando externo pelo PATH; devolve a saída se deu certo, senão None.
+    Texto (vindo de fontes.json/manifesto) roda com shell=True."""
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True)
+        r = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd,
+                           shell=isinstance(cmd, str))
     except (FileNotFoundError, PermissionError):
         return None
     if r.returncode != 0 and mostrar_erro:
@@ -258,12 +260,36 @@ def instalar(args):
     with open(caminho, 'w') as f:
         f.write(json.dumps(cj, indent=2, ensure_ascii=False) + '\n')
 
-    falhas = []  # etapa 6 soma repositórios e programas aqui
+    falhas, versoes = [], []
     manifesto = ler_json(os.path.join(kit, 'manifesto.json'), {})
     plugins(manifesto, falhas)
-    print('Os plugins do manifesto se instalam ao abrir o Claude Code.')
+    for r in manifesto.get('repositorios', []):
+        destino = r['caminho'].replace(MARCA, home)
+        if os.path.exists(destino):
+            continue
+        if rodar(['git', 'clone', r['remote'], destino]) is None:
+            falhas.append(destino)
+        elif r.get('depois') and rodar(r['depois'], cwd=destino) is None:
+            falhas.append(destino + ' (depois)')
+    comandos = {p['nome']: p['versao']
+                for p in ler_json(os.path.join(kit, 'fontes.json'), {}).get('programas', [])}
+    for p in manifesto.get('programas', []):
+        local = rodar(comandos[p['nome']]) if p['nome'] in comandos else None
+        if local is None:
+            if rodar(p['instalar']) is None:
+                falhas.append(p['nome'])
+        elif local != p['versao']:
+            versoes.append('%s: %s → %s' % (p['nome'], local, p['versao']))
     if falhas:
         print('falha em:\n' + '\n'.join('  ' + f for f in falhas))
+    if versoes:
+        print('versão diferente (daqui → do manifesto):\n'
+              + '\n'.join('  ' + v for v in versoes))
+    ausentes = [c for c in sorted(cred) if not os.path.exists(c)]
+    if ausentes:
+        print('credenciais ausentes:\n' + '\n'.join('  ' + c for c in ausentes))
+    print('WhatsApp: faça o login por QR e inicie a ponte.')
+    print('Abrir o Claude Code para os plugins do manifesto se instalarem.')
     print('snapshot: ' + snap)
     return 0
 
