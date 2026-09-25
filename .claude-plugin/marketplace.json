@@ -1,11 +1,13 @@
 {
   "name": "zoi-kit",
-  "owner": { "name": "luccassilveira" },
+  "owner": {
+    "name": "luccassilveira"
+  },
   "plugins": [
     {
       "name": "zoi-skills",
       "source": "./plugins/zoi-skills",
-      "description": "Skills próprias: design, prompt engineering, pesquisa, debug e rotina de sessão."
+      "description": "Skills próprias: API GoHighLevel, prompt engineering e controle do Supacode."
     }
   ]
 }

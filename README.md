@@ -1,14 +1,17 @@
 # claude-kit
 
-Meu setup de Claude Code em um repo — skills próprias empacotadas como plugin, mais a
-lista de plugins de terceiros que eu de fato uso (medida por contagem de invocações
-nos transcripts, não por palpite).
+Meu setup de Claude Code em um repo: skills próprias empacotadas como plugin, o fluxo de
+trabalho (Vesta) e o jeito de falar (output style Seco), mais a lista de plugins e skills
+de terceiros que eu de fato uso.
 
 ## Instalar numa máquina nova
 
 ```bash
 git clone https://github.com/luccas-silveira/claude-kit && bash claude-kit/install.sh
 ```
+
+Idempotente: rodar de novo atualiza sem duplicar nada. Hooks e `outputStyle` são fundidos
+no `settings.json` existente, sem apagar o que já está lá.
 
 Ou só as skills próprias, sem clonar:
 
@@ -19,33 +22,39 @@ Ou só as skills próprias, sem clonar:
 
 ## O que tem aqui
 
-`plugins/zoi-skills/skills/` — 9 skills próprias:
+`plugins/zoi-skills/skills/` — skills próprias, instaladas como plugin:
 
 | skill | pra quê |
 |---|---|
-| `fechar-sessao` | rotina de encerramento (gates, commit, handoff, memória) |
-| `ghl-api-docs` | referência offline da API GoHighLevel v3 |
-| `impeccable`, `taste-skill` | frontend / design |
-| `graphify` | knowledge graph de qualquer input |
+| `ghl-api-docs` | referência da API GoHighLevel v3 + gotchas medidos ao vivo |
 | `prompt-engineering` | escrever e auditar system prompts |
-| `root-cause` | achar e confirmar causa raiz antes de corrigir |
-| `research` | pesquisa preliminar estruturada |
-| `supacode-cli` | controlar Supacode pelo terminal |
+| `supacode-cli`, `supacode-deeplinks` | controlar o Supacode pelo terminal ou por URL |
 
-## Plugins de terceiros (o `install.sh` puxa)
+`home/` — o que vai direto para `~/.claude`, porque depende de caminho fixo e de hook:
 
-`superpowers` (brainstorming, writing-plans, subagent-driven-development — as mais usadas),
-`playwright` (o MCP mais chamado de longe), `ponytail`, `claude-mem`, `watch`,
-`code-review`, `security-guidance`, `pyright-lsp`, `typescript-lsp`.
+| peça | pra quê |
+|---|---|
+| `skills/vesta` + `commands/vesta-*` | fluxo de trabalho criativo: spec → pesquisa → grill → plano → execução travada por prova de teste |
+| `output-styles/seco.md` | output style padrão: diz só o que deve ser dito |
+| `hooks.json` | hooks da Vesta (início, adoção, parada) e o lembrete do Seco depois de cada edição |
+
+## Terceiros (o `install.sh` puxa da fonte)
+
+Plugins: `superpowers`, `playwright`, `security-guidance`, `ponytail`, `watch`,
+`impeccable`, `caveman` (só subagentes e skills; a fala fica com o Seco), `headroom`.
+
+Skills avulsas: `archify` (tt-a1i/archify), `grill-me` e `wayfinder` (mattpocock/skills).
 
 ## Fora do escopo
 
-MCP servers com binário/credencial local (`gitnexus`, `ghraphnizer`, `codegraph`) e o
-conteúdo de `~/.claude/memory/` — memória é pessoal por máquina, não entra no repo.
+`deja` e `graft` instalam as próprias skills e hooks junto com o CLI. `headroom` precisa do
+CLI (`uv tool install headroom-ai`). MCP servers com binário ou credencial local, o
+`CLAUDE.md` global e a memória ficam de fora: são pessoais por máquina.
 
 ## Manutenção
 
-Pra saber o que ainda vale manter, conte as invocações reais nos transcripts:
+O kit é gerado a partir da máquina viva. Pra saber o que ainda vale manter, conte as
+invocações reais nos transcripts:
 
 ```bash
 grep -roh '"skill":"[^"]*"' --include='*.jsonl' ~/.claude/projects \

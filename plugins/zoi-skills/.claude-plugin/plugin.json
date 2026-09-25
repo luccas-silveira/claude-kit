@@ -1,6 +1,8 @@
 {
   "name": "zoi-skills",
-  "version": "1.0.0",
-  "description": "Skills próprias: design, prompt engineering, pesquisa, debug e rotina de sessão.",
-  "author": { "name": "luccassilveira" }
+  "version": "2.0.0",
+  "description": "Skills próprias: API GoHighLevel, prompt engineering e controle do Supacode.",
+  "author": {
+    "name": "luccassilveira"
+  }
 }

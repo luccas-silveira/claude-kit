@@ -51,6 +51,12 @@ Detalhes e evidências: `~/Desktop/Projetos_ZOI/blacklist/DECISOES.md`.
 - URL de autorização (não está óbvia na doc):
   `https://marketplace.gohighlevel.com/oauth/chooselocation?response_type=code&redirect_uri=…&client_id=…&scope=a+b+c`.
   O `code` é de uso único — erro no callback exige refazer o fluxo inteiro.
+- **Não existe "reinstalar": a subconta já instalada some da lista de instalação** (medido em
+  2026-08-07). O modal "selecionar subcontas" do `/v2/oauth/chooselocation` só lista subcontas
+  SEM o app — buscar pelo nome de uma instalada devolve lista vazia, sem mensagem nenhuma.
+  Para reaplicar configuração de app (provider novo, escopo novo) numa subconta que já tem o
+  app: **desinstale primeiro**, depois instale. A rota antiga `/oauth/chooselocation` (sem
+  `/v2`) não é escape — responde `HttpException: No integration found with the id: <appId>`.
 - **Endpoints `/oauth/installed-locations` e `/oauth/location-token` usam `Version: v3`**
   (data tipo `2021-07-28` → 404 "Cannot GET" — o header Version ROTEIA no gateway; versão
   errada parece rota inexistente). O location-token responde em **camelCase**
@@ -83,6 +89,47 @@ Detalhes e evidências: `~/Desktop/Projetos_ZOI/blacklist/DECISOES.md`.
   Email, Live Chat.
 - O webhook do app também recebe eventos que não são de mensagem (INSTALL, UNINSTALL, etc.)
   — logue os tipos desconhecidos; ficar cego a eles custou um bug de install dessincronizado.
+
+### Conversation Providers
+
+Medido em 2026-08-07 (ZOI Hub, provider de SMS que entrega WhatsApp).
+
+- **Workflow com ação "Send SMS" NUNCA usa provider marcado como canal extra.** A doc diz isso
+  numa linha fácil de perder (`SMS (Add new conversation channel)` → "SMS module is not
+  currently supported"), e o sintoma engana: envio manual da tela de conversas funciona, só a
+  automação não. Motivo: a conversa guarda `lastMessageConversationProviderId` e o envio manual
+  herda dele; o workflow usa o provider **padrão da subconta**. Para automação funcionar, o
+  provider tem que ser do tipo "substituir o padrão" — criar SEM marcar "Is this a custom
+  conversation provider" e escolher em Settings > Phone Numbers > Advanced Settings > SMS Provider.
+  Diagnóstico rápido pela API: `messageType` da mensagem. `TYPE_CUSTOM_PROVIDER_SMS` = canal
+  extra; `TYPE_CUSTOM_SMS` = provider padrão do app; `TYPE_SMS` com
+  `conversationProviderId: null` = saiu pelo LC Phone/Twilio, cobrando SMS. **Correção de
+  2026-08-17:** este bloco dizia que provider padrão gravaria `TYPE_SMS`. Não grava — grava
+  `TYPE_CUSTOM_SMS` com o id dele. São três valores, não dois. Use o `conversationProviderId`
+  para saber QUAL provider, e o `messageType` só para saber de que família ele é.
+- **Confirmado por medição em 2026-08-17: com o provider PADRÃO, o `Send SMS` de workflow chega
+  no Delivery URL, com o texto intacto** — inclusive `#`, acento e `\n` (nunca `\r\n`). Duas
+  ressalvas medidas: espaço na borda do texto é aparado no caminho, e cada Enter do editor de
+  workflow vira `\n\n`, porque ele é de parágrafos.
+- **O payload do provider padrão NÃO traz `conversationProviderId` nem `customUserId`; `userId`
+  vem presente até em envio de workflow.** Consequência: quem filtra entrega por
+  `conversationProviderId` recusa toda automação. E a duplicata clássica ("cliente recebeu duas
+  vezes") sai justamente do provider padrão — uma mensagem do composer é entregue AOS DOIS
+  providers quando os dois apontam para a mesma Delivery URL. Duplicata e automação legítima
+  chegam idênticas em todos os campos; só o par (texto, contato) repetido em segundos as separa.
+  A duplicação não é sistemática: 10 entregas com provider e 1 sem, na janela medida.
+- **Escolher o provider padrão da subconta NÃO é automatizável.** Existe só leitura —
+  `GET /locations/:locationId/conversationChannels/:type` (scope `locations.readonly`), que
+  devolve `defaults.SMS` com o id do provider ativo. Não há PUT/POST equivalente em toda a API
+  pública. O painel usa `backend.leadconnectorhq.com/locations/:id/conversationChannels/SMS`,
+  API interna com sessão de usuário do CRM — não aceita token de app. Consequência de produto:
+  esse clique fica no onboarding manual do cliente; automatizável no máximo a **verificação**.
+- **Provider criado depois da instalação não chega na subconta já instalada** — e, como não
+  existe reinstalar (ver OAuth acima), a migração exige desinstalar e instalar de novo. Criar
+  o provider ANTES do primeiro cliente instalar evita a dança inteira.
+- Módulos do app (Conversation Providers, Custom JS, …) são aplicados **ao app, não à versão**:
+  salvar altera produção mesmo com a versão em `draft`. O marketplace avisa e pede digitar
+  `CONFIRM`.
 
 ### Conversas (API)
 
