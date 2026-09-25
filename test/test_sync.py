@@ -21,13 +21,18 @@ FORA = [
 ]
 
 
-class TestSync(Caso):
+BLOQUEIO = '.config/claude-kit/bloqueio.txt'
+
+
+class KitCaso(Caso):
+    """HOME falso + kit com fontes.json + bloqueio.txt inócuo. Sem testes."""
     def setUp(self):
         super().setUp()
         self.kit = os.path.join(os.path.dirname(self.home), 'kit')
         self.esp = os.path.join(self.kit, 'espelho')
         os.makedirs(self.kit)
         self.fontes({})
+        self.escreve(BLOQUEIO, 'termo-inocuo-zzq\n')
 
     # --- helpers ---
     def escreve(self, rel, conteudo='x', raiz=None):
@@ -80,7 +85,9 @@ class TestSync(Caso):
                         r[p] = f.read()
         return r
 
-    # --- testes ---
+
+
+class TestSync(KitCaso):
     def test_copia_gerenciados_no_mesmo_caminho(self):
         for rel in GERENCIADOS:
             self.escreve(rel, 'conteudo de ' + rel)
