@@ -1,0 +1,34 @@
+{
+  "programas": [
+    {"nome": "node", "versao": "node --version", "instalar": "brew install node"},
+    {"nome": "python@3.13", "versao": "python3.13 --version", "instalar": "brew install python@3.13"},
+    {"nome": "uv", "versao": "uv --version", "instalar": "brew install uv"},
+    {"nome": "jq", "versao": "jq --version", "instalar": "brew install jq"},
+    {"nome": "gh", "versao": "gh --version", "instalar": "brew install gh"},
+    {"nome": "go", "versao": "go version", "instalar": "brew install go"},
+    {"nome": "ffmpeg", "versao": "ffmpeg -version", "instalar": "brew install ffmpeg"},
+    {"nome": "yt-dlp", "versao": "yt-dlp --version", "instalar": "brew install yt-dlp"},
+    {"nome": "graft", "versao": "graft --version", "instalar": "npm install -g @nanonets/graft"},
+    {"nome": "deja", "versao": "deja --version", "instalar": "curl -fsSL https://raw.githubusercontent.com/vshulcz/deja-vu/main/install.sh | sh"},
+    {"nome": "headroom-ai", "versao": "headroom --version", "instalar": "uv tool install headroom-ai"},
+    {"nome": "scrapling", "versao": "scrapling --version", "instalar": "uv tool install scrapling"},
+    {"nome": "docker", "versao": "docker --version", "instalar": "brew install --cask docker"},
+    {"nome": "supacode", "versao": "brew list --cask --versions supacode", "instalar": "brew install --cask supacode"},
+    {"nome": "knobler", "versao": "brew list --cask --versions knobler", "instalar": "brew install --cask luccas-silveira/knobler/knobler"},
+    {"nome": "claude", "versao": "claude --version", "instalar": "curl -fsSL https://claude.ai/install.sh | bash"}
+  ],
+  "repositorios": [
+    {"caminho": "~/Desktop/ZOI/Projetos_ZOI/automaster_v2", "depois": ""},
+    {"caminho": "~/Code/whatsapp-mcp", "depois": "cd whatsapp-bridge && go build"},
+    {"caminho": "~/claude-code-otel", "depois": "docker compose up -d"},
+    {"caminho": "~/Documents/2. ZOI/ghl-docs", "depois": ""},
+    {"caminho": "~/Code/claude-tooling", "depois": ""}
+  ],
+  "credenciais": [
+    "~/.config/zoi",
+    "~/.config/watch/.env",
+    "~/.config/gh/hosts.yml",
+    "~/Code/whatsapp-mcp/whatsapp-bridge/store",
+    "~/.automaster/chrome-profile"
+  ]
+}
