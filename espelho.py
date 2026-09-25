@@ -8,7 +8,9 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
+import time
 from pathlib import Path
 
 GERENCIADOS = [
@@ -82,6 +84,9 @@ def espelhar(origem, destino, rel, ctx):
     """Copia origem (caminho lógico sob o home) para destino, trocando o home por __HOME__."""
     if os.path.basename(origem) in EXCLUIR_NOME or rel in EXCLUIR_REL or origem in ctx['cred']:
         return
+    if os.path.islink(origem) and ctx.get('inverso'):
+        os.symlink(os.readlink(origem).replace(MARCA, ctx['para']), destino)
+        return
     if os.path.islink(origem):
         real = os.path.realpath(origem)
         if any(real == r or real.startswith(r + os.sep) for r in ctx['repos']):
@@ -98,7 +103,7 @@ def espelhar(origem, destino, rel, ctx):
     with open(origem, 'rb') as f:
         dados = f.read()
     try:
-        dados = dados.decode('utf-8').replace(ctx['home'], MARCA).encode('utf-8')
+        dados = dados.decode('utf-8').replace(ctx['home'], ctx.get('para', MARCA)).encode('utf-8')
     except UnicodeDecodeError:
         pass
     with open(destino, 'wb') as f:
@@ -213,7 +218,62 @@ def instalar(args):
     if not shutil.which('claude'):
         print('Claude Code não encontrado no PATH. Instale o Claude Code antes.', file=sys.stderr)
         return 1
+    home = str(Path.home())
+    kit = os.path.abspath(args.kit or os.path.dirname(os.path.abspath(__file__)))
+    esp = os.path.join(kit, 'espelho')
+    cred = {os.path.join(home, c[2:]) if c.startswith('~/') else c.replace(MARCA, home)
+            for c in ler_json(os.path.join(kit, 'manifesto.json'), {}).get('credenciais', [])}
+
+    snap = None
+    while not snap or os.path.exists(snap):  # nome é por segundo; espera o próximo
+        if snap:
+            time.sleep(0.2)
+        snap = os.path.join(home, 'claude-espelho-%s.tar.gz'
+                            % datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
+    with tarfile.open(snap, 'w:gz') as tar:
+        for rel in GERENCIADOS + ['.claude.json']:
+            if os.path.lexists(os.path.join(home, rel)):
+                tar.add(os.path.join(home, rel), arcname=rel)
+
+    ctx = {'home': MARCA, 'para': home, 'cred': set(), 'repos': [], 'inverso': True}
+    for rel in GERENCIADOS:
+        origem = os.path.join(esp, rel)
+        if not os.path.lexists(origem):
+            continue
+        destino = os.path.join(home, rel)
+        limpar(destino, rel, cred)
+        os.makedirs(os.path.dirname(destino), exist_ok=True)
+        espelhar(origem, destino, rel, ctx)
+
+    with open(os.path.join(esp, 'mcp.json')) as f:
+        mcp = json.loads(f.read().replace(MARCA, home))
+    caminho = os.path.join(home, '.claude.json')
+    cj = ler_json(caminho, {})
+    cj['mcpServers'] = mcp.get('global', {})
+    projetos = cj.setdefault('projects', {})
+    for p in projetos.values():
+        p.pop('mcpServers', None)
+    for p, servidores in mcp.get('porProjeto', {}).items():
+        projetos.setdefault(p, {})['mcpServers'] = servidores
+    with open(caminho, 'w') as f:
+        f.write(json.dumps(cj, indent=2, ensure_ascii=False) + '\n')
+    print('snapshot: ' + snap)
     return 0
+
+
+def limpar(destino, rel, cred):
+    """Apaga destino, poupando EXCLUIR_REL e credenciais que estiverem dentro dele."""
+    if rel in EXCLUIR_REL or destino in cred or not os.path.lexists(destino):
+        return
+    if os.path.isdir(destino) and not os.path.islink(destino):
+        for nome in os.listdir(destino):
+            limpar(os.path.join(destino, nome), rel + '/' + nome, cred)
+        try:
+            os.rmdir(destino)
+        except OSError:
+            pass
+    else:
+        os.remove(destino)
 
 
 def main(argv=None):
@@ -223,7 +283,9 @@ def main(argv=None):
     ps.add_argument('--kit', help='pasta do kit (padrão: a do espelho.py)')
     ps.add_argument('--sim', action='store_true', help='publica sem perguntar')
     ps.set_defaults(fn=sync)
-    sub.add_parser('instalar', help='instala o setup do kit no home').set_defaults(fn=instalar)
+    pi = sub.add_parser('instalar', help='instala o setup do kit no home')
+    pi.add_argument('--kit', help='pasta do kit (padrão: a do espelho.py)')
+    pi.set_defaults(fn=instalar)
     args = p.parse_args(argv)
     if not args.cmd:
         p.print_usage(sys.stderr)
