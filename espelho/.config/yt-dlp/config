@@ -1,0 +1,15 @@
+# Sempre baixar melhor vídeo + melhor áudio separadamente
+-f "bestvideo[height<=2160]+bestaudio/bestvideo+bestaudio/best"
+
+# Forçar saída em MP4
+--merge-output-format mp4
+
+# Diretório de download
+-o ~/Downloads/yt-dlp/%(title)s.%(ext)s
+
+# Metadados e thumbnail
+--add-metadata
+--embed-thumbnail
+
+# Preferir formatos específicos quando disponíveis
+--format-sort "res:2160,fps,br,asr,proto:https"

@@ -22,7 +22,8 @@ GERENCIADOS = [
     '.config/yt-dlp',
 ]
 EXCLUIR_NOME = {'__pycache__', '.DS_Store', 'node_modules', '.git'}
-EXCLUIR_REL = {'.claude/CLAUDE.md', '.claude/memory', '.claude/skills/synced'}
+EXCLUIR_REL = {'.claude/CLAUDE.md', '.claude/memory', '.claude/skills/synced',
+               '.claude/plugins/local/pipeline-reuniao'}  # plugin de cliente
 MARCA = '__HOME__'
 SEGREDO = re.compile(
     r'\bghp_[A-Za-z0-9]{36}|\bsk-[A-Za-z0-9]{40}|eyJ[\w-]+\.eyJ[\w-]+\.[\w-]+'
@@ -48,7 +49,8 @@ def barreiras(raiz, termos):
             for i, linha in enumerate(linhas, 1):
                 baixa = linha.lower()
                 motivo = ('possível segredo' if SEGREDO.search(linha) else
-                          next(('termo bloqueado: ' + t for t in termos if t in baixa), None))
+                          next(('termo bloqueado: ' + t for t in termos
+                                if re.search(r'\b' + re.escape(t) + r'\b', baixa)), None))
                 if motivo:
                     achados.append('%s:%d: %s' % (os.path.relpath(p, raiz), i, motivo))
     return achados
@@ -267,7 +269,8 @@ def instalar(args):
         destino = r['caminho'].replace(MARCA, home)
         if os.path.exists(destino):
             continue
-        if rodar(['git', 'clone', r['remote'], destino]) is None:
+        # remote começando com "-" viraria opção do git (ex.: --upload-pack)
+        if r['remote'].startswith('-') or rodar(['git', 'clone', r['remote'], destino]) is None:
             falhas.append(destino)
         elif r.get('depois') and rodar(r['depois'], cwd=destino) is None:
             falhas.append(destino + ' (depois)')

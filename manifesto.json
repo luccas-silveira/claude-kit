@@ -1,0 +1,238 @@
+{
+  "credenciais": [
+    "__HOME__/.config/zoi",
+    "__HOME__/.config/watch/.env",
+    "__HOME__/.config/gh/hosts.yml",
+    "__HOME__/Code/whatsapp-mcp/whatsapp-bridge/store",
+    "__HOME__/.automaster/chrome-profile"
+  ],
+  "marketplaces": [
+    {
+      "fonte": {
+        "repo": "JuliusBrussee/caveman",
+        "source": "github"
+      },
+      "nome": "caveman"
+    },
+    {
+      "fonte": {
+        "repo": "anthropics/claude-plugins-official",
+        "source": "github"
+      },
+      "nome": "claude-plugins-official"
+    },
+    {
+      "fonte": {
+        "repo": "bradautomates/claude-video",
+        "source": "github"
+      },
+      "nome": "claude-video"
+    },
+    {
+      "fonte": {
+        "repo": "mksglu/context-mode",
+        "source": "github"
+      },
+      "nome": "context-mode"
+    },
+    {
+      "fonte": {
+        "repo": "headroomlabs-ai/headroom",
+        "source": "github"
+      },
+      "nome": "headroom-marketplace"
+    },
+    {
+      "fonte": {
+        "repo": "openai/codex-plugin-cc",
+        "source": "github"
+      },
+      "nome": "openai-codex"
+    },
+    {
+      "fonte": {
+        "repo": "DietrichGebert/ponytail",
+        "source": "github"
+      },
+      "nome": "ponytail"
+    },
+    {
+      "fonte": {
+        "path": "__HOME__/Desktop/ZOI/Projetos_ZOI/automaster_v2",
+        "source": "directory"
+      },
+      "nome": "zoi"
+    }
+  ],
+  "plugins": [
+    {
+      "id": "automaster@zoi",
+      "ligado": true,
+      "versao": "0.18.0"
+    },
+    {
+      "id": "caveman@caveman",
+      "ligado": true,
+      "versao": "0d95a81d35a9"
+    },
+    {
+      "id": "code-review@claude-plugins-official",
+      "ligado": false,
+      "versao": "ca08d5e47d64"
+    },
+    {
+      "id": "headroom@headroom-marketplace",
+      "ligado": true,
+      "versao": "0.31.0"
+    },
+    {
+      "id": "playwright@claude-plugins-official",
+      "ligado": true,
+      "versao": "ca08d5e47d64"
+    },
+    {
+      "id": "ponytail@ponytail",
+      "ligado": true,
+      "versao": "4.8.4"
+    },
+    {
+      "id": "pyright-lsp@claude-plugins-official",
+      "ligado": false,
+      "versao": "1.0.0"
+    },
+    {
+      "id": "security-guidance@claude-plugins-official",
+      "ligado": true,
+      "versao": "2.0.8"
+    },
+    {
+      "id": "stripe@claude-plugins-official",
+      "ligado": false,
+      "versao": "0.10.3"
+    },
+    {
+      "id": "superpowers@claude-plugins-official",
+      "ligado": true,
+      "versao": "6.4.1"
+    },
+    {
+      "id": "swift-lsp@claude-plugins-official",
+      "ligado": false,
+      "versao": "1.0.0"
+    },
+    {
+      "id": "typescript-lsp@claude-plugins-official",
+      "ligado": false,
+      "versao": "1.0.0"
+    },
+    {
+      "id": "watch@claude-video",
+      "ligado": true,
+      "versao": "0.2.0"
+    }
+  ],
+  "programas": [
+    {
+      "instalar": "brew install node",
+      "nome": "node",
+      "versao": "v26.5.0"
+    },
+    {
+      "instalar": "brew install python@3.13",
+      "nome": "python@3.13",
+      "versao": "Python 3.13.13"
+    },
+    {
+      "instalar": "brew install uv",
+      "nome": "uv",
+      "versao": "uv 0.8.4 (Homebrew 2025-07-30)"
+    },
+    {
+      "instalar": "brew install jq",
+      "nome": "jq",
+      "versao": "jq-1.8.1"
+    },
+    {
+      "instalar": "brew install gh",
+      "nome": "gh",
+      "versao": "gh version 2.83.1 (2025-11-13)\nhttps://github.com/cli/cli/releases/tag/v2.83.1"
+    },
+    {
+      "instalar": "brew install go",
+      "nome": "go",
+      "versao": "go version go1.27.1 darwin/arm64"
+    },
+    {
+      "instalar": "brew install ffmpeg",
+      "nome": "ffmpeg",
+      "versao": "ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers\nbuilt with Apple clang version 17.0.0 (clang-1700.4.4.1)\nconfiguration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon\nlibavutil      60.  8.100 / 60.  8.100\nlibavcodec     62. 11.100 / 62. 11.100\nlibavformat    62.  3.100 / 62.  3.100\nlibavdevice    62.  1.100 / 62.  1.100\nlibavfilter    11.  4.100 / 11.  4.100\nlibswscale      9.  1.100 /  9.  1.100\nlibswresample   6.  1.100 /  6.  1.100\n\nExiting with exit code 0"
+    },
+    {
+      "instalar": "brew install yt-dlp",
+      "nome": "yt-dlp",
+      "versao": "2026.03.17"
+    },
+    {
+      "instalar": "npm install -g @nanonets/graft",
+      "nome": "graft",
+      "versao": "0.19.0"
+    },
+    {
+      "instalar": "curl -fsSL https://raw.githubusercontent.com/vshulcz/deja-vu/main/install.sh | sh",
+      "nome": "deja",
+      "versao": "deja 0.21.2"
+    },
+    {
+      "instalar": "uv tool install headroom-ai",
+      "nome": "headroom-ai",
+      "versao": "headroom, version 0.32.1"
+    },
+    {
+      "instalar": "uv tool install scrapling",
+      "nome": "scrapling",
+      "versao": "Scrapling, version 0.4.15"
+    },
+    {
+      "instalar": "brew install --cask docker",
+      "nome": "docker",
+      "versao": "Docker version 29.4.0, build 9d7ad9f"
+    },
+    {
+      "instalar": "brew install --cask supacode",
+      "nome": "supacode",
+      "versao": null
+    },
+    {
+      "instalar": "brew install --cask luccas-silveira/knobler/knobler",
+      "nome": "knobler",
+      "versao": "knobler 0.35.2"
+    },
+    {
+      "instalar": "curl -fsSL https://claude.ai/install.sh | bash",
+      "nome": "claude",
+      "versao": "2.1.282 (Claude Code)"
+    }
+  ],
+  "repositorios": [
+    {
+      "caminho": "__HOME__/Desktop/ZOI/Projetos_ZOI/automaster_v2",
+      "depois": "",
+      "remote": "https://github.com/zoi-tech/automaster_v2.git"
+    },
+    {
+      "caminho": "__HOME__/Code/whatsapp-mcp",
+      "depois": "cd whatsapp-bridge && go build",
+      "remote": "https://github.com/luccas-silveira/whatsapp-mcp.git"
+    },
+    {
+      "caminho": "__HOME__/claude-code-otel",
+      "depois": "docker compose up -d",
+      "remote": "https://github.com/ColeMurray/claude-code-otel"
+    },
+    {
+      "caminho": "__HOME__/Documents/2. ZOI/ghl-docs",
+      "depois": "",
+      "remote": "https://github.com/luccas-silveira/ghl-docs.git"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "global": {
+    "deja": {
+      "args": [
+        "mcp"
+      ],
+      "command": "__HOME__/.local/bin/deja",
+      "type": "stdio"
+    },
+    "graft": {
+      "args": [
+        "mcp"
+      ],
+      "command": "graft"
+    },
+    "inspo": {
+      "type": "http",
+      "url": "https://inspomcp.dev/api/mcp"
+    },
+    "scrapling": {
+      "args": [],
+      "command": "__HOME__/.local/bin/scrapling-mcp",
+      "env": {},
+      "type": "stdio"
+    },
+    "whatsapp": {
+      "args": [
+        "--directory",
+        "__HOME__/Code/whatsapp-mcp/whatsapp-mcp-server",
+        "run",
+        "main.py"
+      ],
+      "command": "/opt/homebrew/bin/uv",
+      "env": {},
+      "type": "stdio"
+    }
+  },
+  "porProjeto": {
+    "__HOME__/Desktop/AgentStudio": {
+      "caveman-shrink": {
+        "args": [
+          "-y",
+          "caveman-shrink"
+        ],
+        "command": "npx",
+        "env": {},
+        "type": "stdio"
+      }
+    },
+    "__HOME__/Desktop/Projetos/ghraphnizer": {
+      "ghraphnizer": {
+        "args": [
+          "__HOME__/Desktop/Projetos/ghraphnizer/dist/cli.js",
+          "mcp",
+          "--watch",
+          "__HOME__/Desktop/Projetos/ghraphnizer"
+        ],
+        "command": "node",
+        "env": {},
+        "type": "stdio"
+      }
+    }
+  }
+}
