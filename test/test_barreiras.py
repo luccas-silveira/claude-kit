@@ -59,6 +59,7 @@ class TestBarreiras(KitCaso):
     def test_termo_bloqueado_no_manifesto(self):
         self.repo('Code/r', 'git@github.com:eu/acmecorp-painel.git')
         self.fontes({'repositorios': [{'caminho': '~/Code/r', 'depois': ''}]})
+        self.antes = self.foto()  # fontes.json mudou no teste, não no sync
         self.escreve(BLOQUEIO, 'AcmeCorp\n')
         saida = self.barra([])
         self.assertIn('manifesto', saida.lower())
