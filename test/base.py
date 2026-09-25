@@ -41,12 +41,13 @@ class Caso(unittest.TestCase):
             with open(caminho + '.out', 'w') as f:
                 f.write(saida)
 
-    def _run(self, cmd):
-        r = subprocess.run(cmd, cwd=self.home, env=self.env, capture_output=True, text=True)
+    def _run(self, cmd, entrada=None):
+        r = subprocess.run(cmd, cwd=self.home, env=self.env, capture_output=True, text=True,
+                           input=entrada)
         return r.returncode, r.stdout + r.stderr
 
-    def roda(self, *args):
-        return self._run(['/usr/bin/python3', SCRIPT, *args])
+    def roda(self, *args, entrada=None):
+        return self._run(['/usr/bin/python3', SCRIPT, *args], entrada)
 
     def roda_sh(self, nome, *args):
         return self._run(['/bin/bash', os.path.join(KIT, nome), *args])
