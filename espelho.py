@@ -1,5 +1,6 @@
 """Espelho do setup de Claude Code: `sync` copia do home para o kit, `instalar` faz o inverso."""
 import argparse
+import datetime
 import json
 import os
 import re
@@ -51,13 +52,15 @@ def barreiras(raiz, termos):
     return achados
 
 
-def rodar(cmd):
+def rodar(cmd, mostrar_erro=False, cru=False):
     """Roda um comando externo pelo PATH; devolve a saída se deu certo, senão None."""
     try:
         r = subprocess.run(cmd, capture_output=True, text=True)
     except (FileNotFoundError, PermissionError):
         return None
-    return r.stdout.strip() if r.returncode == 0 else None
+    if r.returncode != 0 and mostrar_erro:
+        print(r.stderr.strip(), file=sys.stderr)
+    return (r.stdout.rstrip() if cru else r.stdout.strip()) if r.returncode == 0 else None
 
 
 def ler_json(caminho, padrao):
@@ -122,9 +125,38 @@ def sync(args):
 
     tmp = tempfile.mkdtemp(prefix='.sync-', dir=kit)
     try:
-        return montar(home, kit, tmp, fontes, cred, repos, ctx, termos)
+        codigo = montar(home, kit, tmp, fontes, cred, repos, ctx, termos)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+    return codigo or publicar(kit, args.sim)
+
+
+def publicar(kit, sim):
+    """Mostra o que mudou no kit e, confirmado, commita espelho e manifesto e empurra."""
+    topo = rodar(['git', '-C', kit, 'rev-parse', '--show-toplevel'])
+    if not topo or os.path.realpath(topo) != os.path.realpath(kit):
+        return 0
+    git = ['git', '-C', kit]
+    alvo = ['--', 'espelho', 'manifesto.json']
+    status = rodar(git + ['status', '--short'] + alvo, cru=True)
+    if not status:
+        print('nada mudou')
+        return 0
+    print(status)
+    print(rodar(git + ['diff', '--stat'] + alvo) or '')
+    if not sim:
+        try:
+            resp = input('Publicar? [s/N] ')
+        except EOFError:
+            resp = ''
+        if resp.strip().lower() != 's':
+            return 0
+    data = datetime.datetime.now().isoformat(timespec='seconds')
+    for cmd in (['add', '-A'] + alvo[1:], ['commit', '-q', '-m', 'espelho: ' + data] + alvo,
+                ['push', '-q']):
+        if rodar(git + cmd, mostrar_erro=True) is None:
+            return 1
+    return 0
 
 
 def montar(home, kit, tmp, fontes, cred, repos, ctx, termos):
@@ -189,6 +221,7 @@ def main(argv=None):
     sub = p.add_subparsers(dest='cmd')
     ps = sub.add_parser('sync', help='copia o setup do home para o kit')
     ps.add_argument('--kit', help='pasta do kit (padrão: a do espelho.py)')
+    ps.add_argument('--sim', action='store_true', help='publica sem perguntar')
     ps.set_defaults(fn=sync)
     sub.add_parser('instalar', help='instala o setup do kit no home').set_defaults(fn=instalar)
     args = p.parse_args(argv)
