@@ -2,10 +2,12 @@
 import argparse
 import json
 import os
+import re
 import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 GERENCIADOS = [
@@ -19,6 +21,34 @@ GERENCIADOS = [
 EXCLUIR_NOME = {'__pycache__', '.DS_Store', 'node_modules', '.git'}
 EXCLUIR_REL = {'.claude/CLAUDE.md', '.claude/memory', '.claude/skills/synced'}
 MARCA = '__HOME__'
+SEGREDO = re.compile(
+    r'\bghp_[A-Za-z0-9]{36}|\bsk-[A-Za-z0-9]{40}|eyJ[\w-]+\.eyJ[\w-]+\.[\w-]+'
+    r'|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+    r'|(api[_-]?key|secret|token|password)["\']?\s*[:=]\s*["\'][A-Za-z0-9_/+-]{16,}')
+BLOQUEIO = '.config/claude-kit/bloqueio.txt'
+
+
+def barreiras(raiz, termos):
+    """Devolve 'caminho:linha: motivo' para cada segredo ou termo bloqueado sob raiz."""
+    achados = []
+    for d, subs, arqs in os.walk(raiz):
+        subs.sort()
+        for n in sorted(arqs):
+            p = os.path.join(d, n)
+            if os.path.islink(p):
+                continue
+            try:
+                with open(p, encoding='utf-8') as f:
+                    linhas = f.read().splitlines()
+            except (UnicodeDecodeError, OSError):
+                continue
+            for i, linha in enumerate(linhas, 1):
+                baixa = linha.lower()
+                motivo = ('possível segredo' if SEGREDO.search(linha) else
+                          next(('termo bloqueado: ' + t for t in termos if t in baixa), None))
+                if motivo:
+                    achados.append('%s:%d: %s' % (os.path.relpath(p, raiz), i, motivo))
+    return achados
 
 
 def rodar(cmd):
@@ -82,8 +112,23 @@ def sync(args):
     ctx = {'home': home, 'cred': set(cred),
            'repos': [os.path.realpath(r['caminho']) for r in repos]}
 
-    espelho = os.path.join(kit, 'espelho')
-    shutil.rmtree(espelho, ignore_errors=True)
+    bloqueio = os.path.join(home, BLOQUEIO)
+    try:
+        with open(bloqueio) as f:
+            termos = [t.strip().lower() for t in f if t.strip()]
+    except OSError:
+        print('recusado: crie %s com os termos de cliente, um por linha.' % bloqueio)
+        return 1
+
+    tmp = tempfile.mkdtemp(prefix='.sync-', dir=kit)
+    try:
+        return montar(home, kit, tmp, fontes, cred, repos, ctx, termos)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def montar(home, kit, tmp, fontes, cred, repos, ctx, termos):
+    espelho = os.path.join(tmp, 'espelho')
     os.makedirs(espelho)
     for rel in GERENCIADOS:
         origem = os.path.join(home, rel)
@@ -110,7 +155,7 @@ def sync(args):
                                  'depois': r.get('depois', '')})
         else:
             print('aviso: repositório sem remote, fora do manifesto: ' + r['caminho'])
-    escrever_json(os.path.join(kit, 'manifesto.json'), {
+    escrever_json(os.path.join(tmp, 'manifesto.json'), {
         'plugins': [{'id': i, 'versao': (v[0].get('version') if v else None),
                      'ligado': ligados.get(i) is True} for i, v in sorted(instalados.items())],
         'marketplaces': [{'nome': n, 'fonte': m.get('source')} for n, m in sorted(
@@ -120,6 +165,15 @@ def sync(args):
         'repositorios': repositorios,
         'credenciais': cred,
     }, home)
+
+    achados = barreiras(tmp, termos)
+    if achados:
+        print('\n'.join(achados))
+        print('ABORTADO: nada foi escrito no kit.')
+        return 1
+    shutil.rmtree(os.path.join(kit, 'espelho'), ignore_errors=True)
+    os.replace(espelho, os.path.join(kit, 'espelho'))
+    os.replace(os.path.join(tmp, 'manifesto.json'), os.path.join(kit, 'manifesto.json'))
     return 0
 
 
