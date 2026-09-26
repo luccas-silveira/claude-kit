@@ -28,7 +28,7 @@ Se você quer só uma peça, pegue a pasta dela em `espelho/.claude/` e copie à
 
 | Item | Pra quê |
 |---|---|
-| `vesta` (skill) + `/vesta-pausar`, `/vesta-retomar` | Fluxo para qualquer feature: spec, pesquisa, grill, plano e execução travada por prova de teste. Um hook não deixa o Claude parar com etapa sem prova. |
+| `vesta` (skill) + `/vesta-painel`, `/vesta-pausar`, `/vesta-retomar` | Fluxo para qualquer feature: spec, pesquisa, grill, plano e execução travada por prova de teste. Um hook não deixa o Claude parar com etapa sem prova. O painel mostra no navegador a etapa em que o projeto está. |
 | `seco` (output style, padrão) | Diz só o que deve ser dito, com a complexidade mínima que a ideia exige. |
 | `concise` (output style) | Respostas curtas, sem preâmbulo. |
 | `linguagem-simples` (output style) | Português claro e direto, baseado na NBR ISO 24495-1. |
@@ -45,7 +45,6 @@ Se você quer só uma peça, pegue a pasta dela em `espelho/.claude/` e copie à
 | `hallmark` | Design de páginas sem cara de gerado por IA: criação, auditoria, redesign. |
 | `prompt-engineering` | Escreve e audita system prompts de agentes. |
 | `supacode-cli`, `supacode-deeplinks` | Controla o Supacode pelo terminal ou por URL. |
-| `wayfinder` | Planeja trabalho grande demais para uma sessão como um mapa de tickets de decisão. |
 
 ### Plugins
 
@@ -68,6 +67,7 @@ instalador.
 | `scrapling` | Scraping de páginas, inclusive as protegidas. |
 | `whatsapp` | Ler e enviar mensagens pelo WhatsApp (ponte local do `whatsapp-mcp`). |
 | `inspo` | Referências de design (`inspomcp.dev`). |
+| `playwright` | Navegador sem janela, com perfil fixo em `~/.cache/claude-navegador`. |
 
 ### Hooks
 
@@ -75,7 +75,7 @@ instalador.
 |---|---|---|
 | `pre-tool-memory` | antes da primeira ferramenta | Injeta a memória do projeto no contexto. |
 | `session-length` | a cada mensagem | Avisa uma vez quando a sessão passa de 50 pedidos. |
-| `painel` | início da sessão | Sobe o painel do wayfinder em projetos que o usam. |
+| `fechar-navegador-orfao` | fim da sessão | Fecha o navegador sem janela do Playwright que ficou aberto sozinho. |
 | `knobler-ask` | pergunta ao usuário | Manda a pergunta para o app Knobler e devolve a resposta. |
 
 Mais a statusline (`statusline.sh`) e o agente `web-search-agent` para pesquisa na web.
