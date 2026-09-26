@@ -112,6 +112,7 @@ def espelhar(origem, destino, rel, ctx):
         pass
     with open(destino, 'wb') as f:
         f.write(dados)
+    shutil.copymode(origem, destino)
 
 
 def sync(args):
@@ -178,6 +179,8 @@ def montar(home, kit, tmp, fontes, cred, repos, ctx, termos):
             os.makedirs(os.path.dirname(destino), exist_ok=True)
             espelhar(origem, destino, rel, ctx)
 
+    sem_excluidos(os.path.join(espelho, '.claude/settings.json'))
+
     cj = ler_json(os.path.join(home, '.claude.json'), {})
     escrever_json(os.path.join(espelho, 'mcp.json'), {
         'global': cj.get('mcpServers', {}),
@@ -218,11 +221,33 @@ def montar(home, kit, tmp, fontes, cred, repos, ctx, termos):
     return 0
 
 
+def sem_excluidos(caminho):
+    """Tira do settings.json os hooks que chamam algo de EXCLUIR_REL (não vai no kit)."""
+    st = ler_json(caminho, None)
+    if not st:
+        return
+    cita = lambda h: any('/' + e in h.get('command', '') for e in EXCLUIR_REL)
+    if not isinstance(st.get('hooks'), dict):
+        return
+    for evento, grupos in list(st['hooks'].items()):
+        for g in grupos:
+            g['hooks'] = [h for h in g.get('hooks', []) if not cita(h)]
+        st['hooks'][evento] = [g for g in grupos if g['hooks']]
+        if not st['hooks'][evento]:
+            del st['hooks'][evento]
+    with open(caminho, 'w') as f:
+        f.write(json.dumps(st, indent=2, ensure_ascii=False) + '\n')
+
+
 def instalar(args):
     if not shutil.which('claude'):
         print('Claude Code não encontrado no PATH. Instale o Claude Code antes.', file=sys.stderr)
         return 1
     home = str(Path.home())
+    # ponytail: shell não interativo pode não ter estes no PATH; sem eles o programa
+    # parece ausente e é reinstalado por cima, noutra versão
+    os.environ['PATH'] = os.pathsep.join(
+        [os.environ.get('PATH', ''), os.path.join(home, '.local/bin'), '/opt/homebrew/bin'])
     kit = os.path.abspath(args.kit or os.path.dirname(os.path.abspath(__file__)))
     esp = os.path.join(kit, 'espelho')
     cred = {os.path.join(home, c[2:]) if c.startswith('~/') else c.replace(MARCA, home)
@@ -262,6 +287,7 @@ def instalar(args):
     with open(caminho, 'w') as f:
         f.write(json.dumps(cj, indent=2, ensure_ascii=False) + '\n')
 
+    os.makedirs(os.path.join(home, '.claude/metrics'), exist_ok=True)
     falhas, versoes = [], []
     manifesto = ler_json(os.path.join(kit, 'manifesto.json'), {})
     plugins(manifesto, falhas)
@@ -274,19 +300,20 @@ def instalar(args):
             falhas.append(destino)
         elif r.get('depois') and rodar(r['depois'], cwd=destino) is None:
             falhas.append(destino + ' (depois)')
+    desligar_sem_fonte(home, manifesto, falhas)
     comandos = {p['nome']: p['versao']
                 for p in ler_json(os.path.join(kit, 'fontes.json'), {}).get('programas', [])}
     for p in manifesto.get('programas', []):
         local = rodar(comandos[p['nome']]) if p['nome'] in comandos else None
         if local is None:
-            if rodar(p['instalar']) is None:
+            if rodar(p['instalar'], mostrar_erro=True) is None:
                 falhas.append(p['nome'])
         elif local != p['versao']:
             versoes.append('%s: %s → %s' % (p['nome'], local, p['versao']))
     if falhas:
         print('falha em:\n' + '\n'.join('  ' + f for f in falhas))
     if versoes:
-        print('versão diferente (daqui → do manifesto):\n'
+        print('versão diferente (daqui → do manifesto; só aviso, não precisa igualar):\n'
               + '\n'.join('  ' + v for v in versoes))
     ausentes = [c for c in sorted(cred) if not os.path.exists(c)]
     if ausentes:
@@ -311,6 +338,23 @@ def plugins(manifesto, falhas):
         if m['name'] not in nomes and rodar(
                 ['claude', 'plugin', 'marketplace', 'remove', m['name']]) is None:
             falhas.append(m['name'])
+
+
+def desligar_sem_fonte(home, manifesto, falhas):
+    """Desliga plugins de marketplace local cuja pasta não existe (ex.: clone privado falhou)."""
+    sumidos = {m['nome'] for m in manifesto.get('marketplaces', [])
+               if isinstance(m.get('fonte'), dict) and m['fonte'].get('source') == 'directory'
+               and not os.path.isdir(m['fonte'].get('path', '').replace(MARCA, home))}
+    caminho = os.path.join(home, '.claude/settings.json')
+    st = ler_json(caminho, None)
+    if not sumidos or not st:
+        return
+    for pid in list(st.get('enabledPlugins', {})):
+        if pid.split('@')[-1] in sumidos and st['enabledPlugins'][pid]:
+            st['enabledPlugins'][pid] = False
+            falhas.append(pid + ' (desligado: pasta do marketplace não existe)')
+    with open(caminho, 'w') as f:
+        f.write(json.dumps(st, indent=2, ensure_ascii=False) + '\n')
 
 
 def limpar(destino, rel, cred):

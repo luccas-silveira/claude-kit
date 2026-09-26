@@ -173,7 +173,7 @@
       "versao": "2026.03.17"
     },
     {
-      "instalar": "npm install -g @nanonets/graft",
+      "instalar": "npm install -g @nanonets/graft || npm install -g --prefix ~/.local @nanonets/graft",
       "nome": "graft",
       "versao": "0.19.0"
     },
@@ -188,7 +188,7 @@
       "versao": "headroom, version 0.32.1"
     },
     {
-      "instalar": "uv tool install scrapling",
+      "instalar": "uv tool install 'scrapling[ai]'",
       "nome": "scrapling",
       "versao": "Scrapling, version 0.4.15"
     },

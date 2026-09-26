@@ -246,15 +246,6 @@
     ],
     "Stop": [
       {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "__HOME__/.claude/plugins/local/pipeline-reuniao/hooks/stop-hook.sh"
-          }
-        ]
-      },
-      {
         "hooks": [
           {
             "type": "command",
