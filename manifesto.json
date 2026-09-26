@@ -78,7 +78,7 @@
     {
       "id": "code-review@claude-plugins-official",
       "ligado": false,
-      "versao": "ca08d5e47d64"
+      "versao": "fa59bc903774"
     },
     {
       "id": "headroom@headroom-marketplace",
@@ -87,8 +87,8 @@
     },
     {
       "id": "playwright@claude-plugins-official",
-      "ligado": true,
-      "versao": "ca08d5e47d64"
+      "ligado": false,
+      "versao": "fa59bc903774"
     },
     {
       "id": "ponytail@ponytail",
@@ -210,7 +210,7 @@
     {
       "instalar": "curl -fsSL https://claude.ai/install.sh | bash",
       "nome": "claude",
-      "versao": "2.1.282 (Claude Code)"
+      "versao": "2.1.283 (Claude Code)"
     }
   ],
   "repositorios": [

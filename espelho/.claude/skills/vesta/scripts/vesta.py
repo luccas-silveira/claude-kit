@@ -400,6 +400,15 @@ def cmd_retomar(r, args):
     return 'execução retomada; a trava liga na próxima parada desta sessão'
 
 
+def cmd_painel(r, args):
+    import painel
+    url = painel.subir(r)
+    if not url:
+        raise Recusa('não há Vesta neste projeto (docs/vesta ou .claude/vesta)')
+    subprocess.run(['open', url])
+    return url
+
+
 def cmd_pausar(r, args):
     e = exigir(r)
     if e['espera'] == 'plano':
@@ -441,6 +450,25 @@ def aviso(texto):
 
 def hook_inicio(entrada):
     r = raiz(entrada.get('cwd'))
+    out = aviso_inicio(r, entrada)
+    try:
+        import painel
+        url = painel.subir(r)
+    except Exception:
+        url = None
+    if not url:
+        return out
+    linha = f'Painel deste projeto: {url}'
+    visivel = f'vesta: painel de {os.path.basename(r)} em {url}'
+    if out is None:
+        return {'systemMessage': visivel,
+                'hookSpecificOutput': {'hookEventName': 'SessionStart', 'additionalContext': linha}}
+    out['hookSpecificOutput']['additionalContext'] += ' ' + linha
+    out['systemMessage'] += '\n' + visivel
+    return out
+
+
+def aviso_inicio(r, entrada):
     try:
         e = ler(r)
     except (ValueError, OSError):
@@ -467,7 +495,7 @@ def hook_inicio(entrada):
 COMANDOS = {'criar': cmd_criar, 'iniciar': cmd_iniciar, 'mostrar': cmd_mostrar,
             'prova': cmd_prova, 'concluir': cmd_concluir, 'retomar': cmd_retomar,
             'pausar': cmd_pausar, 'adicionar': cmd_adicionar, 'fechar': cmd_fechar,
-            'guarda': cmd_guarda}
+            'guarda': cmd_guarda, 'painel': cmd_painel}
 HOOKS = {'hook-parada': hook_parada, 'hook-inicio': hook_inicio, 'hook-adocao': hook_adocao}
 
 

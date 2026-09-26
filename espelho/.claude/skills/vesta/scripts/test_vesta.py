@@ -4,6 +4,7 @@ import os
 import subprocess
 import tempfile
 import unittest
+import urllib.request
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 SCRIPT = os.path.join(AQUI, 'vesta.py')
@@ -346,12 +347,33 @@ class Retomada(Base):
         self.assertIn('/vesta-retomar', out['systemMessage'])
         self.assertEqual(out['hookSpecificOutput']['hookEventName'], 'SessionStart')
 
+    def tearDown(self):
+        # hook-inicio em projeto com Vesta sobe o painel (etapa 5); derruba o deste projeto
+        for i in range(100):
+            try:
+                with urllib.request.urlopen(f'http://127.0.0.1:{4700 + i}/quem', timeout=0.3) as r:
+                    if r.read().decode().strip() != f'vesta-painel {self.r}':
+                        continue
+            except Exception:
+                continue
+            for pid in subprocess.run(['lsof', '-ti', f'tcp:{4700 + i}', '-sTCP:LISTEN'],
+                                      capture_output=True, text=True).stdout.split():
+                subprocess.run(['kill', pid], capture_output=True)
+        super().tearDown()
+
+    def sem_aviso(self, out):
+        """Sem aviso: nada, ou só a linha do painel (etapa 5)."""
+        if out is not None:
+            self.assertEqual(out.get('systemMessage', '').count('\n'), 0)
+            self.assertNotIn('etapa', out.get('systemMessage', ''))
+            self.assertIn('Painel deste projeto', out['hookSpecificOutput']['additionalContext'])
+
     def test_mesma_sessao_sem_aviso(self):
-        self.assertIsNone(self.hook('hook-inicio', sid='s1'))
+        self.sem_aviso(self.hook('hook-inicio', sid='s1'))
 
     def test_sem_estado_sem_aviso(self):
         os.remove(self.caminho_estado)
-        self.assertIsNone(self.hook('hook-inicio', sid='s2'))
+        self.sem_aviso(self.hook('hook-inicio', sid='s2'))
 
     def test_estado_ilegivel_avisa(self):
         with open(self.caminho_estado, 'w') as f:
@@ -438,33 +460,6 @@ class Adocao(Base):
     def test_fechar_apaga_o_estado(self):
         self.assertEqual(self.sf('fechar').returncode, 0)
         self.assertFalse(os.path.exists(self.caminho_estado))
-
-
-# O settings.json vizinho: o de ~/.claude, ou a cópia do backup em config/claude.
-RAIZ_CLAUDE = os.path.normpath(os.path.join(AQUI, '..', '..', '..'))
-GUARDA = r'^__e=\$\(mktemp\); cat > "\$__e"; python3 "[^"]*vesta\.py" silenciar < "\$__e"'
-
-
-class Registro(unittest.TestCase):
-    def comandos(self, evento):
-        with open(os.path.join(RAIZ_CLAUDE, 'settings.json')) as f:
-            h = json.load(f)['hooks']
-        return [x['command'] for g in h.get(evento, []) for x in g['hooks']]
-
-    def test_hooks_da_vesta_registrados(self):
-        self.assertTrue(any('vesta.py" hook-parada' in c for c in self.comandos('Stop')))
-        self.assertTrue(any('vesta.py" hook-inicio' in c for c in self.comandos('SessionStart')))
-        self.assertTrue(any('vesta.py" hook-adocao' in c for c in self.comandos('PostToolUse')))
-        proprios = [c for ev in ('Stop', 'SessionStart', 'PostToolUse') for c in self.comandos(ev)
-                    if 'vesta.py" hook-' in c]
-        for c in proprios:
-            self.assertTrue(c.endswith('|| true'), c)  # script sumido nunca vira bloqueio
-
-    def test_notificacao_do_supacode_com_guarda(self):
-        supacode = [c for c in self.comandos('Stop') if 'supacode-managed-hook' in c]
-        self.assertTrue(supacode)
-        for c in supacode:
-            self.assertRegex(c, GUARDA)
 
 
 class Mockup(Base):

@@ -82,6 +82,16 @@
         ]
       },
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.config/deja/bin/deja-hook hook-tool-after",
+            "statusMessage": "Checking what fixed this before…"
+          }
+        ]
+      },
+      {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           {
@@ -98,26 +108,6 @@
             "type": "command",
             "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" tool-savings",
             "timeout": 8000
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "__HOME__/.config/deja/bin/deja-hook hook-tool-after",
-            "statusMessage": "Checking what fixed this before…"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"__HOME__/.claude/skills/vesta/scripts/vesta.py\" hook-adocao || true",
-            "timeout": 10
           }
         ]
       }
@@ -214,34 +204,24 @@
             "timeout": 5
           }
         ]
-      }
-    ],
-    "SessionStart": [
+      },
       {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "__HOME__/.claude/hooks/painel.sh",
-            "timeout": 30
+            "command": "$HOME/.claude/hooks/fechar-navegador-orfao.sh"
           }
         ]
-      },
+      }
+    ],
+    "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
             "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=session_start%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
             "timeout": 5
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" session-start",
-            "timeout": 8000
           }
         ]
       },
@@ -258,8 +238,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"__HOME__/.claude/skills/vesta/scripts/vesta.py\" hook-inicio || true",
-            "timeout": 10
+            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" session-start",
+            "timeout": 8000
           }
         ]
       }
@@ -291,15 +271,6 @@
             "timeout": 8000
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"__HOME__/.claude/skills/vesta/scripts/vesta.py\" hook-parada || true",
-            "timeout": 10
-          }
-        ]
       }
     ],
     "UserPromptSubmit": [
@@ -325,8 +296,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" prompt",
-            "timeout": 15000
+            "command": "__HOME__/.config/deja/bin/deja-hook hook-prompt",
+            "statusMessage": "Searching past sessions…"
           }
         ]
       },
@@ -334,8 +305,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "__HOME__/.config/deja/bin/deja-hook hook-prompt",
-            "statusMessage": "Searching past sessions…"
+            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" prompt",
+            "timeout": 15000
           }
         ]
       }
@@ -351,7 +322,7 @@
     "caveman@caveman": true,
     "code-review@claude-plugins-official": false,
     "headroom@headroom-marketplace": true,
-    "playwright@claude-plugins-official": true,
+    "playwright@claude-plugins-official": false,
     "ponytail@ponytail": true,
     "pyright-lsp@claude-plugins-official": false,
     "security-guidance@claude-plugins-official": true,
@@ -416,7 +387,7 @@
       "effortLevel": "low"
     },
     "claude-opus-5-5": {
-      "effortLevel": "low"
+      "effortLevel": "high"
     }
   },
   "awaySummaryEnabled": false,

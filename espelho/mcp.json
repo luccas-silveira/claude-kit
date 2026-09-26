@@ -17,6 +17,17 @@
       "type": "http",
       "url": "https://inspomcp.dev/api/mcp"
     },
+    "playwright": {
+      "args": [
+        "@playwright/mcp@latest",
+        "--headless",
+        "--user-data-dir",
+        "__HOME__/.cache/claude-navegador"
+      ],
+      "command": "npx",
+      "env": {},
+      "type": "stdio"
+    },
     "scrapling": {
       "args": [],
       "command": "__HOME__/.local/bin/scrapling-mcp",
