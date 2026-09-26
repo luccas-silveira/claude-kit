@@ -16,7 +16,7 @@ não está no kit sai da sua máquina.
 - Antes de mexer em qualquer coisa, ele guarda o estado anterior em
   `~/claude-espelho-<data>.tar.gz`. Dá para desfazer (veja abaixo).
 - Seu `CLAUDE.md`, sua memória, seus projetos e suas credenciais não são tocados.
-- Três repositórios de apoio são privados (`automaster_v2`, `whatsapp-mcp`, `ghl-docs`). Sem
+- Dois repositórios de apoio são privados (`whatsapp-mcp`, `ghl-docs`). Sem
   acesso, o clone falha, entra na lista de falhas e o resto da instalação segue.
 - Feito para macOS com Homebrew. Precisa do Claude Code já instalado.
 
@@ -51,7 +51,7 @@ Se você quer só uma peça, pegue a pasta dela em `espelho/.claude/` e copie à
 Ligados: `superpowers` (skills de processo: TDD, debugging, revisão), `playwright` (navegador
 automatizado), `security-guidance`, `caveman` (subagentes com saída comprimida), `ponytail`
 (a solução mais simples que funciona), `watch` (assistir vídeo), `headroom` (compressão de
-contexto), `automaster` (auditoria e edição de GoHighLevel; repositório privado).
+contexto), `automaster` (auditoria e edição de GoHighLevel).
 
 Instalados e desligados: `code-review`, `pyright-lsp`, `typescript-lsp`, `swift-lsp`, `stripe`.
 
