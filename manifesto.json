@@ -78,7 +78,7 @@
     {
       "id": "code-review@claude-plugins-official",
       "ligado": false,
-      "versao": "fa59bc903774"
+      "versao": "fbe07fb6ce7d"
     },
     {
       "id": "headroom@headroom-marketplace",
@@ -88,7 +88,7 @@
     {
       "id": "playwright@claude-plugins-official",
       "ligado": false,
-      "versao": "fa59bc903774"
+      "versao": "fbe07fb6ce7d"
     },
     {
       "id": "ponytail@ponytail",
