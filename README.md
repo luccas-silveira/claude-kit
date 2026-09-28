@@ -42,18 +42,19 @@ Se você quer só uma peça, pegue a pasta dela em `espelho/.claude/` e copie à
 | `ghl-api-docs` | Referência offline da API do GoHighLevel v3, com correções medidas ao vivo. |
 | `graft` | Usa o grafo de código do graft antes de grep e leitura de arquivo. |
 | `grill-me` | Entrevista cerrada sobre um plano até cada decisão estar resolvida. |
-| `hallmark` | Design de páginas sem cara de gerado por IA: criação, auditoria, redesign. |
 | `prompt-engineering` | Escreve e audita system prompts de agentes. |
 | `supacode-cli`, `supacode-deeplinks` | Controla o Supacode pelo terminal ou por URL. |
+| `vesta-interface` | Desenha e revisa telas, páginas e componentes; camada de interface da Vesta. Link para `~/Code/vesta-interface`, instalado pelo `install.sh` de lá. |
 
 ### Plugins
 
-Ligados: `superpowers` (skills de processo: TDD, debugging, revisão), `playwright` (navegador
-automatizado), `security-guidance`, `caveman` (subagentes com saída comprimida), `ponytail`
-(a solução mais simples que funciona), `watch` (assistir vídeo), `headroom` (compressão de
-contexto), `automaster` (auditoria e edição de GoHighLevel).
+Ligados: `superpowers` (skills de processo: TDD, debugging, revisão), `security-guidance`,
+`caveman` (subagentes com saída comprimida), `ponytail` (a solução mais simples que
+funciona), `watch` (assistir vídeo), `headroom` (compressão de contexto), `automaster`
+(auditoria e edição de GoHighLevel).
 
-Instalados e desligados: `code-review`, `pyright-lsp`, `typescript-lsp`, `swift-lsp`, `stripe`.
+Instalados e desligados: `code-review`, `pyright-lsp`, `typescript-lsp`, `swift-lsp`, `stripe`,
+`playwright` (substituído pelo MCP `playwright` travado, abaixo).
 
 Os plugins se instalam sozinhos na primeira vez que você abre o Claude Code depois do
 instalador.
@@ -67,7 +68,8 @@ instalador.
 | `scrapling` | Scraping de páginas, inclusive as protegidas. |
 | `whatsapp` | Ler e enviar mensagens pelo WhatsApp (ponte local do `whatsapp-mcp`). |
 | `inspo` | Referências de design (`inspomcp.dev`). |
-| `playwright` | Navegador sem janela, com perfil fixo em `~/.cache/claude-navegador`. |
+| `playwright` | Navegador sem janela, com perfil fixo em `~/.cache/claude-navegador`. Travado em `@playwright/mcp@0.0.82`, com `--snapshot-mode none`. |
+| `chrome-devtools` | DevTools do Chrome sem janela (console, desempenho). Travado em `chrome-devtools-mcp@1.10.1`, com as categorias input, emulation, network e memory desligadas. |
 
 ### Hooks
 
