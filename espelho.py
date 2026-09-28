@@ -107,7 +107,10 @@ def espelhar(origem, destino, rel, ctx):
     with open(origem, 'rb') as f:
         dados = f.read()
     try:
-        dados = dados.decode('utf-8').replace(ctx['home'], ctx.get('para', MARCA)).encode('utf-8')
+        texto = dados.decode('utf-8')
+        if not ctx.get('para'):  # JSON pode vir com a barra escapada: \/Users\/x
+            texto = texto.replace(ctx['home'].replace('/', '\\/'), MARCA)
+        dados = texto.replace(ctx['home'], ctx.get('para', MARCA)).encode('utf-8')
     except UnicodeDecodeError:
         pass
     with open(destino, 'wb') as f:

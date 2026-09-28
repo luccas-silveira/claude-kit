@@ -95,6 +95,14 @@ class TestSync(KitCaso):
         for rel in GERENCIADOS:
             self.assertEqual(self.le(self.no_kit(rel)), 'conteudo de ' + rel, rel)
 
+    def test_home_com_barra_escapada_vira_marcador(self):
+        escapado = self.home.replace('/', '\\/')
+        self.escreve('.claude/settings.json', '{"a": "%s/x"}' % escapado)
+        self.sync()
+        texto = self.le(self.no_kit('.claude/settings.json'))
+        self.assertNotIn(self.home, texto)
+        self.assertIn('__HOME__/x', texto)
+
     def test_keybindings_ausente_nao_quebra(self):
         self.escreve('.claude/settings.json', '{}')
         self.sync()
