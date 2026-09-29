@@ -99,7 +99,7 @@ Clonados no mesmo caminho da origem:
 |---|---|
 | `zoi-tech/automaster` | Servidor do plugin `automaster`. |
 | `luccas-silveira/vesta` | A skill `vesta` e seus comandos, ligados por link ao clone. A cada parada, a Vesta confere se há versão nova aqui e se atualiza. |
-| `luccas-silveira/vesta-interface` | A skill `vesta-interface`, ligada por link ao clone, com o detector de interface e os catálogos. |
+| `luccas-silveira/vesta-interface` | A skill `vesta-interface`, ligada por link ao clone, com o detector de interface e os catálogos. Se atualiza junto com a Vesta, a cada parada. |
 | `luccas-silveira/whatsapp-mcp` | Ponte do WhatsApp usada pelo MCP `whatsapp`; o `servico.sh` compila e liga como serviço do macOS, que sobe no login e volta sozinho quando cai. |
 | `luccas-silveira/ghl-docs` | Espelho da documentação do GoHighLevel. |
 | `ColeMurray/claude-code-otel` | Métricas do Claude Code em Grafana; sobe com `docker compose`. |
