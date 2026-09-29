@@ -67,7 +67,7 @@ Para cada linha de `falha em:` e para cada erro na saída:
    está instalado ou clonado é pulado, e as credenciais não são apagadas.
 4. Abra a issue (seção 5).
 
-Repositório de apoio que falhou no clone ou no passo depois dele (`go build`,
+Repositório de apoio que falhou no clone ou no passo depois dele (`servico.sh`,
 `docker compose up -d`): rode o passo à mão na pasta do repositório. O Docker Desktop precisa
 estar aberto para o `docker compose`.
 

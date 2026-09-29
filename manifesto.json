@@ -210,7 +210,7 @@
     {
       "instalar": "brew install --cask luccas-silveira/knobler/knobler",
       "nome": "knobler",
-      "versao": "0.35.2"
+      "versao": "0.36.0"
     },
     {
       "instalar": "curl -fsSL https://claude.ai/install.sh | bash",
@@ -226,7 +226,7 @@
     },
     {
       "caminho": "__HOME__/Code/whatsapp-mcp",
-      "depois": "cd whatsapp-bridge && go build && ./servico.sh",
+      "depois": "cd whatsapp-bridge && ./servico.sh",
       "remote": "https://github.com/luccas-silveira/whatsapp-mcp.git"
     },
     {
