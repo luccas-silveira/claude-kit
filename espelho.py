@@ -77,11 +77,11 @@ def ler_json(caminho, padrao):
         return padrao
 
 
-def escrever_json(caminho, dados, home):
+def escrever_json(caminho, dados, home, mapa=()):
     os.makedirs(os.path.dirname(caminho), exist_ok=True)
     texto = json.dumps(dados, indent=2, ensure_ascii=False, sort_keys=True) + '\n'
     with open(caminho, 'w') as f:
-        f.write(texto.replace(home, MARCA))
+        f.write(trocar(texto, mapa).replace(home, MARCA))
 
 
 def trocar(texto, mapa):
@@ -200,7 +200,7 @@ def montar(home, kit, tmp, fontes, cred, repos, ctx, termos):
         'global': cj.get('mcpServers', {}),
         'porProjeto': {k: v['mcpServers'] for k, v in cj.get('projects', {}).items()
                        if v.get('mcpServers')},
-    }, home)
+    }, home, ctx['mapa'])
 
     plug = os.path.join(home, '.claude/plugins')
     ligados = ler_json(os.path.join(home, '.claude/settings.json'), {}).get('enabledPlugins', {})
@@ -209,7 +209,7 @@ def montar(home, kit, tmp, fontes, cred, repos, ctx, termos):
     for r in repos:
         remote = rodar(['git', '-C', r['caminho'], 'remote', 'get-url', 'origin'])
         if remote:
-            repositorios.append({'caminho': r['caminho'], 'remote': remote,
+            repositorios.append({'caminho': r['destino'], 'remote': remote,
                                  'depois': r.get('depois', '')})
         else:
             print('aviso: repositório sem remote, fora do manifesto: ' + r['caminho'])
@@ -222,7 +222,7 @@ def montar(home, kit, tmp, fontes, cred, repos, ctx, termos):
                       for p in fontes.get('programas', [])],
         'repositorios': repositorios,
         'credenciais': cred,
-    }, home)
+    }, home, ctx['mapa'])
 
     achados = barreiras(tmp, termos)
     if achados:
