@@ -11,7 +11,7 @@ corrigido por você ou resolvido com o usuário, e depois vira issue neste repos
 - Deu erro e você sabe a causa: corrija, rode de novo e abra a issue.
 - Deu erro e você não tem certeza da causa ou da correção: pergunte ao usuário. Não chute, não
   pule, não encerre.
-- O passo depende do usuário (acesso a repositório privado, credencial, QR do WhatsApp): peça,
+- O passo depende do usuário (credencial, QR do WhatsApp): peça,
   espere e confira depois que ele fizer.
 - A instalação só está pronta quando a verificação do fim deste arquivo passa inteira.
 
@@ -36,12 +36,10 @@ Confira os pré-requisitos. Faltou algum, resolva antes de seguir:
 sw_vers                 # macOS
 brew --version          # Homebrew
 claude --version        # Claude Code
-gh auth status          # necessário para os repositórios privados e para abrir issues
+gh auth status          # necessário para abrir issues
 ```
 
-Sem `gh` logado, peça ao usuário para rodar `! gh auth login`. Sem acesso aos repositórios
-privados (`luccas-silveira/vesta`, `luccas-silveira/whatsapp-mcp`, `luccas-silveira/ghl-docs`),
-peça o acesso ao usuário antes de instalar: sem eles a instalação não fica completa.
+Sem `gh` logado, peça ao usuário para rodar `! gh auth login`.
 
 ## 2. Instalar
 
