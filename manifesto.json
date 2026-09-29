@@ -210,7 +210,7 @@
     {
       "instalar": "curl -fsSL https://claude.ai/install.sh | bash",
       "nome": "claude",
-      "versao": "2.1.283 (Claude Code)"
+      "versao": "2.1.284 (Claude Code)"
     }
   ],
   "repositorios": [

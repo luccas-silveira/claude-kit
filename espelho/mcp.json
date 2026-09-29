@@ -1,5 +1,20 @@
 {
   "global": {
+    "chrome-devtools": {
+      "args": [
+        "--headless",
+        "--isolated",
+        "--no-usage-statistics",
+        "--no-performance-crux",
+        "--categoryInput=false",
+        "--categoryEmulation=false",
+        "--categoryNetwork=false",
+        "--categoryMemory=false"
+      ],
+      "command": "__HOME__/.local/share/vesta-interface/mcp/node_modules/.bin/chrome-devtools-mcp",
+      "env": {},
+      "type": "stdio"
+    },
     "deja": {
       "args": [
         "mcp"
@@ -19,12 +34,13 @@
     },
     "playwright": {
       "args": [
-        "@playwright/mcp@latest",
         "--headless",
+        "--snapshot-mode",
+        "none",
         "--user-data-dir",
         "__HOME__/.cache/claude-navegador"
       ],
-      "command": "npx",
+      "command": "__HOME__/.local/share/vesta-interface/mcp/node_modules/.bin/playwright-mcp",
       "env": {},
       "type": "stdio"
     },

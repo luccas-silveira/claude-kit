@@ -1,4 +1,397 @@
 {
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "CLAUDE_CODE_SILENT_TURN_REMINDER": "0",
+    "CLAUDE_CODE_TURN_UPDATES": "0",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORT_INTERVAL": "5000",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_METRIC_EXPORT_INTERVAL": "10000"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(open:*)",
+      "mcp__playwright",
+      "WebFetch(domain:www.behance.net)",
+      "Bash(sqlite3:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(grep:*)",
+      "WebFetch(domain:marketplace.gohighlevel.com)",
+      "Bash(cd:*)",
+      "Bash(cat:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "mcp__chrome-devtools",
+      "Bash(~/.claude/skills/vesta-interface/ferramentas/*)",
+      "Bash(node:*)",
+      "Bash(graft:*)",
+      "Bash(npx graft:*)",
+      "Bash(graft-dev:*)",
+      "Bash(node dist/cli.js:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "opus",
+  "skillOverrides": {
+    "archify": "off",
+    "deja-history": "off",
+    "supacode-cli": "off",
+    "supacode-deeplinks": "off"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=awaiting_input%s\\033\\\\' \"$__sp\" > \"$__tty\"; __in=$(cat); __t=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"title\" -v budget=160 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}' | base64 | tr -d '\\n'); __b=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"message,last_assistant_message,assistant_response\" -v budget=1000 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}' | base64 | tr -d '\\n'); printf '\\033]3008;start=claude;kind=notify;title=%s;body=%s\\033\\\\' \"$__t\" \"$__b\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf %s 'Seco: nao narre esta edicao. A diff ja mostra o arquivo, as linhas e o conteudo. Siga para a proxima ferramenta; so escreva se houver decisao, achado que muda o rumo, ou o resultado final.'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.config/deja/bin/deja-hook hook-tool-after",
+            "statusMessage": "Checking what fixed this before…"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" post-edit",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|mcp__graft__|Read|Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" tool-savings",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=idle%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.config/deja/bin/deja-hook hook-precompact",
+            "statusMessage": "Saving this session to memory…"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=compacting%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/pre-tool-memory.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.claude/hooks/knobler-ask.sh",
+            "timeout": 600
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|Task|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.config/deja/bin/deja-hook hook-tool",
+            "statusMessage": "Checking what this touches…"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=busy%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "AskUserQuestion|ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=awaiting_input%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "nohup python3 \"$HOME/.claude/skill-stats.py\" --prom > \"$HOME/.claude/metrics/hook.log\" 2>&1 &"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/fechar-navegador-orfao.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;end=claude;event=session_end%s\\033\\\\' \"$__sp\" > \"$__tty\"; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=idle%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.config/deja/bin/deja-hook hook-context",
+            "statusMessage": "Recalling past sessions…"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" session-start",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=session_start%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" stop",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __in=$(cat); __tp=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"transcript_path\" -v budget=4096 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}'); __sid=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"session_id\" -v budget=256 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}'); __apierr=\"\"; [ -n \"$__tp\" ] && [ -f \"$__tp\" ] && __apierr=$(tail -c 262144 \"$__tp\" 2>/dev/null | LC_ALL=C awk -v sid=\"$__sid\" '{if(index($0,\"\\\"isApiErrorMessage\\\":true\")>0){if(sid!=\"\"&&index($0,\"\\\"sessionId\\\":\\\"\" sid \"\\\"\")>0)c=1;next}if(index($0,\"\\\"type\\\":\\\"user\\\"\")>0){c=0;next}if(index($0,\"\\\"type\\\":\\\"assistant\\\"\")>0){c=0;next}}END{printf \"%s\",(c?\"1\":\"\")}'); if [ -n \"$__apierr\" ]; then __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=error%s\\033\\\\' \"$__sp\" > \"$__tty\"; printf '\\033]3008;start=claude;kind=notify;title=QWdlbnQgZXJyb3I=;body=U2Vzc2lvbiBzdG9wcGVkIG9uIGFuIGVycm9y\\033\\\\' > \"$__tty\"; else __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=idle%s\\033\\\\' \"$__sp\" > \"$__tty\"; __t=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"title\" -v budget=160 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}' | base64 | tr -d '\\n'); __b=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"message,last_assistant_message,assistant_response\" -v budget=1000 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}' | base64 | tr -d '\\n'); printf '\\033]3008;start=claude;kind=notify;title=%s;body=%s\\033\\\\' \"$__t\" \"$__b\" > \"$__tty\"; fi; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash __HOME__/.claude/hooks/session-length.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.config/deja/bin/deja-hook hook-prompt",
+            "statusMessage": "Searching past sessions…"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" prompt",
+            "timeout": 15000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=busy%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash __HOME__/.claude/statusline.sh"
+  },
+  "footerLinksRegexes": [],
+  "enabledPlugins": {
+    "automaster@zoi": true,
+    "caveman@caveman": true,
+    "code-review@claude-plugins-official": false,
+    "headroom@headroom-marketplace": true,
+    "playwright@claude-plugins-official": false,
+    "ponytail@ponytail": true,
+    "pyright-lsp@claude-plugins-official": false,
+    "security-guidance@claude-plugins-official": true,
+    "stripe@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": false,
+    "typescript-lsp@claude-plugins-official": false,
+    "watch@claude-video": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "claude-video": {
+      "source": {
+        "source": "github",
+        "repo": "bradautomates/claude-video"
+      }
+    },
+    "context-mode": {
+      "source": {
+        "source": "github",
+        "repo": "mksglu/context-mode"
+      }
+    },
+    "headroom-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "headroomlabs-ai/headroom"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    },
+    "zoi": {
+      "source": {
+        "source": "directory",
+        "path": "__HOME__/Desktop/ZOI/Projetos_ZOI/automaster_v2"
+      }
+    }
+  },
+  "outputStyle": "Seco",
+  "language": "Brazilian Portuguese",
+  "effortLevel": "medium",
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "low"
+    },
+    "claude-opus-5": {
+      "effortLevel": "low"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "low"
+    }
+  },
+  "awaySummaryEnabled": false,
+  "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "editorMode": "normal",
+  "switchModelsOnFlag": true,
+  "fileCheckpointingEnabled": false,
+  "terminalProgressBarEnabled": false,
+  "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "autoMode": {
     "environment": [
@@ -28,401 +421,6 @@
       "**Org-specific CLIs**: None configured",
       "routine under `~/.claude/` prefix: this repo's install.sh writes to `~/.claude` (hooks, output-styles, skills, plugins) — treat as this user's own trusted config path, not a third-party target"
     ]
-  },
-  "awaySummaryEnabled": false,
-  "editorMode": "normal",
-  "effortLevel": "medium",
-  "enabledPlugins": {
-    "automaster@zoi": true,
-    "caveman@caveman": true,
-    "code-review@claude-plugins-official": false,
-    "headroom@headroom-marketplace": true,
-    "playwright@claude-plugins-official": false,
-    "ponytail@ponytail": true,
-    "pyright-lsp@claude-plugins-official": false,
-    "security-guidance@claude-plugins-official": true,
-    "stripe@claude-plugins-official": false,
-    "superpowers@claude-plugins-official": true,
-    "swift-lsp@claude-plugins-official": false,
-    "typescript-lsp@claude-plugins-official": false,
-    "watch@claude-video": true
-  },
-  "env": {
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
-    "CLAUDE_CODE_SILENT_TURN_REMINDER": "0",
-    "CLAUDE_CODE_TURN_UPDATES": "0",
-    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
-    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
-    "OTEL_LOGS_EXPORTER": "otlp",
-    "OTEL_LOGS_EXPORT_INTERVAL": "5000",
-    "OTEL_METRICS_EXPORTER": "otlp",
-    "OTEL_METRIC_EXPORT_INTERVAL": "10000"
-  },
-  "extraKnownMarketplaces": {
-    "caveman": {
-      "source": {
-        "repo": "JuliusBrussee/caveman",
-        "source": "github"
-      }
-    },
-    "claude-video": {
-      "source": {
-        "repo": "bradautomates/claude-video",
-        "source": "github"
-      }
-    },
-    "context-mode": {
-      "source": {
-        "repo": "mksglu/context-mode",
-        "source": "github"
-      }
-    },
-    "headroom-marketplace": {
-      "source": {
-        "repo": "headroomlabs-ai/headroom",
-        "source": "github"
-      }
-    },
-    "openai-codex": {
-      "source": {
-        "repo": "openai/codex-plugin-cc",
-        "source": "github"
-      }
-    },
-    "ponytail": {
-      "source": {
-        "repo": "DietrichGebert/ponytail",
-        "source": "github"
-      }
-    },
-    "zoi": {
-      "source": {
-        "path": "__HOME__/Desktop/ZOI/Projetos_ZOI/automaster_v2",
-        "source": "directory"
-      }
-    }
-  },
-  "fileCheckpointingEnabled": false,
-  "footerLinksRegexes": [],
-  "hooks": {
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=awaiting_input%s\\033\\\\' \"$__sp\" > \"$__tty\"; __in=$(cat); __t=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"title\" -v budget=160 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}' | base64 | tr -d '\\n'); __b=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"message,last_assistant_message,assistant_response\" -v budget=1000 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}' | base64 | tr -d '\\n'); printf '\\033]3008;start=claude;kind=notify;title=%s;body=%s\\033\\\\' \"$__t\" \"$__b\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 10,
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ],
-    "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "printf %s 'Seco: nao narre esta edicao. A diff ja mostra o arquivo, as linhas e o conteudo. Siga para a proxima ferramenta; so escreva se houver decisao, achado que muda o rumo, ou o resultado final.'",
-            "timeout": 5,
-            "type": "command"
-          }
-        ],
-        "matcher": "Edit|Write|NotebookEdit"
-      },
-      {
-        "hooks": [
-          {
-            "command": "__HOME__/.config/deja/bin/deja-hook hook-tool-after",
-            "statusMessage": "Checking what fixed this before…",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash"
-      },
-      {
-        "hooks": [
-          {
-            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" post-edit",
-            "timeout": 10000,
-            "type": "command"
-          }
-        ],
-        "matcher": "Write|Edit|MultiEdit"
-      },
-      {
-        "hooks": [
-          {
-            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" tool-savings",
-            "timeout": 8000,
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash|mcp__graft__|Read|Grep|Glob"
-      },
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=idle%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 5,
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "command": "__HOME__/.config/deja/bin/deja-hook hook-precompact",
-            "statusMessage": "Saving this session to memory…",
-            "type": "command"
-          }
-        ],
-        "matcher": "manual|auto"
-      },
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=compacting%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 5,
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "bash ~/.claude/hooks/pre-tool-memory.sh",
-            "timeout": 5,
-            "type": "command"
-          }
-        ],
-        "matcher": "*"
-      },
-      {
-        "hooks": [
-          {
-            "command": "__HOME__/.claude/hooks/knobler-ask.sh",
-            "timeout": 600,
-            "type": "command"
-          }
-        ],
-        "matcher": "AskUserQuestion"
-      },
-      {
-        "hooks": [
-          {
-            "command": "__HOME__/.config/deja/bin/deja-hook hook-tool",
-            "statusMessage": "Checking what this touches…",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|Task|Agent"
-      },
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=busy%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 5,
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      },
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=awaiting_input%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 5,
-            "type": "command"
-          }
-        ],
-        "matcher": "AskUserQuestion|ExitPlanMode"
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "command": "nohup python3 \"$HOME/.claude/skill-stats.py\" --prom > \"$HOME/.claude/metrics/hook.log\" 2>&1 &",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      },
-      {
-        "hooks": [
-          {
-            "command": "$HOME/.claude/hooks/fechar-navegador-orfao.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      },
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;end=claude;event=session_end%s\\033\\\\' \"$__sp\" > \"$__tty\"; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=idle%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 5,
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "command": "__HOME__/.config/deja/bin/deja-hook hook-context",
-            "statusMessage": "Recalling past sessions…",
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" session-start",
-            "timeout": 8000,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=session_start%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 5,
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" stop",
-            "timeout": 8000,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __in=$(cat); __tp=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"transcript_path\" -v budget=4096 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}'); __sid=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"session_id\" -v budget=256 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}'); __apierr=\"\"; [ -n \"$__tp\" ] && [ -f \"$__tp\" ] && __apierr=$(tail -c 262144 \"$__tp\" 2>/dev/null | LC_ALL=C awk -v sid=\"$__sid\" '{if(index($0,\"\\\"isApiErrorMessage\\\":true\")>0){if(sid!=\"\"&&index($0,\"\\\"sessionId\\\":\\\"\" sid \"\\\"\")>0)c=1;next}if(index($0,\"\\\"type\\\":\\\"user\\\"\")>0){c=0;next}if(index($0,\"\\\"type\\\":\\\"assistant\\\"\")>0){c=0;next}}END{printf \"%s\",(c?\"1\":\"\")}'); if [ -n \"$__apierr\" ]; then __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=error%s\\033\\\\' \"$__sp\" > \"$__tty\"; printf '\\033]3008;start=claude;kind=notify;title=QWdlbnQgZXJyb3I=;body=U2Vzc2lvbiBzdG9wcGVkIG9uIGFuIGVycm9y\\033\\\\' > \"$__tty\"; else __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=idle%s\\033\\\\' \"$__sp\" > \"$__tty\"; __t=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"title\" -v budget=160 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}' | base64 | tr -d '\\n'); __b=$(printf '%s' \"$__in\" | LC_ALL=C awk -v keys=\"message,last_assistant_message,assistant_response\" -v budget=1000 'function ws(c){return c==\" \"||c==\"\\t\"||c==\"\\n\"||c==\"\\r\"}function fv(s,key,  p,i,n,c,o,e){p=\"\\\"\"key\"\\\"\";i=index(s,p);if(i==0)return \"\";i+=length(p);n=length(s);while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\":\")return \"\";i++;while(i<=n){if(ws(substr(s,i,1)))i++;else break}if(substr(s,i,1)!=\"\\\"\")return \"\";i++;o=\"\";e=0;while(i<=n){c=substr(s,i,1);if(e){o=o c;e=0;i++;continue}if(c==\"\\\\\"){o=o c;e=1;i++;continue}if(c==\"\\\"\")break;o=o c;i++}return o}{d=d $0}END{n=split(keys,ks,\",\");v=\"\";for(j=1;j<=n;j++){v=fv(d,ks[j]);if(v!=\"\")break}if(length(v)>budget+0)v=substr(v,1,budget+0);printf \"%s\",v}' | base64 | tr -d '\\n'); printf '\\033]3008;start=claude;kind=notify;title=%s;body=%s\\033\\\\' \"$__t\" \"$__b\" > \"$__tty\"; fi; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 10,
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "command": "bash __HOME__/.claude/hooks/session-length.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      },
-      {
-        "hooks": [
-          {
-            "command": "__HOME__/.config/deja/bin/deja-hook hook-prompt",
-            "statusMessage": "Searching past sessions…",
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "node \"__HOME__/.claude/helpers/graft-hooks.cjs\" prompt",
-            "timeout": 15000,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "[ -n \"${SUPACODE_SURFACE_ID:-}\" ] && { __ppid=$(ps -o ppid= -p $$ 2>/dev/null | tr -d '[:space:]'); __tty=$(ps -o tty= -p \"$__ppid\" 2>/dev/null | tr -d '[:space:]'); case \"$__tty\" in *[0-9]*) __tty=\"/dev/${__tty#/dev/}\";; *) __tty=\"/dev/tty\";; esac; __sp=\"\"; [ -n \"${SUPACODE_SOCKET_PATH:-}\" ] && [ -n \"$__ppid\" ] && __sp=\";pid=$__ppid\"; printf '\\033]3008;start=claude;event=busy%s\\033\\\\' \"$__sp\" > \"$__tty\"; } >/dev/null 2>&1 || true # supacode-managed-hook",
-            "timeout": 10,
-            "type": "command"
-          }
-        ]
-      }
-    ]
-  },
-  "inputNeededNotifEnabled": true,
-  "language": "Brazilian Portuguese",
-  "model": "opus[1m]",
-  "modelSettings": {
-    "claude-fable-5-1": {
-      "effortLevel": "low"
-    },
-    "claude-opus-5": {
-      "effortLevel": "low"
-    },
-    "claude-opus-5-5": {
-      "effortLevel": "low"
-    }
-  },
-  "outputStyle": "Seco",
-  "permissions": {
-    "allow": [
-      "Bash(python3:*)",
-      "Bash(open:*)",
-      "mcp__plugin_playwright_playwright__browser_navigate",
-      "WebFetch(domain:www.behance.net)",
-      "Bash(sqlite3:*)",
-      "Bash(tail:*)",
-      "Bash(head:*)",
-      "Bash(grep:*)",
-      "WebFetch(domain:marketplace.gohighlevel.com)",
-      "Bash(cd:*)",
-      "Bash(cat:*)",
-      "Bash(curl:*)",
-      "Bash(pkill:*)",
-      "mcp__plugin_playwright_playwright__browser_take_screenshot",
-      "mcp__plugin_playwright_playwright__browser_run_code",
-      "mcp__plugin_playwright_playwright__browser_wait_for",
-      "mcp__plugin_playwright_playwright__browser_console_messages",
-      "mcp__plugin_playwright_playwright__browser_evaluate",
-      "mcp__plugin_playwright_playwright__browser_close",
-      "mcp__plugin_playwright_playwright__browser_install",
-      "Bash(node:*)",
-      "Bash(graft:*)",
-      "Bash(npx graft:*)",
-      "Bash(graft-dev:*)",
-      "Bash(node dist/cli.js:*)"
-    ],
-    "defaultMode": "auto"
-  },
-  "remoteControlAtStartup": true,
-  "skillOverrides": {
-    "archify": "off",
-    "deja-history": "off",
-    "supacode-cli": "off",
-    "supacode-deeplinks": "off"
-  },
-  "skipDangerousModePermissionPrompt": true,
-  "statusLine": {
-    "command": "bash __HOME__/.claude/statusline.sh",
-    "type": "command"
-  },
-  "switchModelsOnFlag": true,
-  "terminalProgressBarEnabled": false,
-  "tui": "fullscreen",
-  "voice": {
-    "enabled": true,
-    "mode": "hold"
   },
   "voiceEnabled": true
 }

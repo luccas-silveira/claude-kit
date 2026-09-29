@@ -9,6 +9,7 @@ import os
 import re
 import subprocess
 import sys
+import urllib.request
 
 PASTA = os.path.join('.claude', 'vesta')
 # O .gitignore ignora a si mesmo: gravar o estado nunca suja a árvore. aprendizados.md fica
@@ -136,7 +137,8 @@ def cmd_criar(r, args):
     if not isinstance(d, dict) or not d.get('teste') or not d.get('etapas'):
         raise Recusa('criar espera um JSON com plano, teste e etapas')
     e = {'versao': 1, 'plano': d.get('plano', ''), 'teste': d['teste'], 'tela': d.get('tela', []),
-         'mockup': d.get('mockup'), 'sessao': None, 'espera': 'plano', 'motivo': None,
+         'mockup': d.get('mockup'), 'tela_existente': bool(d.get('tela_existente')),
+         'sessao': None, 'espera': 'plano', 'motivo': None,
          'bloqueios': {'seguidos': 0, 'assinatura': ''}, 'etapas': []}
     acrescentar(e, d['etapas'])
     gravar(r, e)
@@ -151,6 +153,60 @@ def exigir_mockup(r, e, etapas):
     if not m or git(r, 'ls-files', '--error-unmatch', m) is None:
         raise Recusa('o plano tem tela e não há mockup aprovado e commitado; faça o mockup '
                      '(mockup.md) antes de executar')
+    exigir_provas(r, os.path.dirname(m))
+    if not e.get('tela_existente'):
+        exigir_direcoes(r)
+
+
+def rastreados(r, pasta):
+    """Nomes dos arquivos rastreados direto em `pasta` (sem subpastas)."""
+    saida = git(r, 'ls-files', '--', pasta + '/') or ''
+    return {os.path.basename(f) for f in saida.splitlines() if os.path.dirname(f) == pasta}
+
+
+def melhor(grupos, sufixos):
+    """O grupo (rodada ou tela) com mais arquivos presentes; None quando não há nenhum."""
+    return max(sorted(grupos), key=lambda g: sum(g + s in grupos[g] for s in sufixos), default=None)
+
+
+def exigir_provas(r, pasta):
+    """As provas da verificação da vesta-interface, commitadas em `pasta`, com o mesmo N."""
+    nomes = rastreados(r, pasta)
+    if 'relatorio.md' not in nomes:
+        raise Recusa(f'falta {pasta}/relatorio.md commitado: rode a verificação da vesta-interface')
+    sufixos = ('-375.png', '-1440.png', '-detector-375.json', '-detector-1440.json')
+    rodadas = {}
+    for n in nomes:
+        m = re.fullmatch(r'(r\d+)(-375\.png|-1440\.png|-detector-375\.json|-detector-1440\.json)', n)
+        if m:
+            rodadas.setdefault(m[1], set()).add(n)
+    rn = melhor(rodadas, sufixos) or 'r<N>'
+    for s in sufixos:
+        if rn + s not in nomes:
+            raise Recusa(f'falta {pasta}/{rn + s} commitado (prints e detectores da mesma rodada)')
+    for s in sufixos[2:]:
+        try:
+            with open(os.path.join(r, pasta, rn + s)) as f:
+                json.load(f)
+        except (OSError, ValueError):
+            raise Recusa(f'{pasta}/{rn + s} não é JSON válido: grave a saída do detector em JSON')
+
+
+def exigir_direcoes(r):
+    """As duas direções da tela nova e os quatro prints delas (passo 3 da vesta-interface)."""
+    pasta = 'docs/design/mockups'
+    nomes = rastreados(r, pasta)
+    sufixos = ('-a.html', '-b.html', '-a-375.png', '-a-1440.png', '-b-375.png', '-b-1440.png')
+    telas = {}
+    for n in nomes:
+        m = re.fullmatch(r'(.+)-[ab](\.html|-375\.png|-1440\.png)', n)
+        if m:
+            telas.setdefault(m[1], set()).add(n)
+    t = melhor(telas, sufixos) or '<tela>'
+    for s in sufixos:
+        if t + s not in nomes:
+            raise Recusa(f'falta {pasta}/{t + s} commitado: as duas direções da tela nova e os prints '
+                         'delas (tela que já existe: "tela_existente": true no criar)')
 
 
 def cmd_iniciar(r, args):
@@ -268,6 +324,8 @@ def cmd_concluir(r, args):
     # Arquivo não rastreado criado pelo próprio teste (relatório, cobertura) não invalida a prova.
     if git(r, 'status', '--porcelain', '--untracked-files=no'):
         raise Recusa('há arquivo rastreado mudado depois da prova; commite e rode prova teste de novo')
+    if x.get('tela'):
+        exigir_provas(r, os.path.join(os.path.dirname(e.get('mockup') or ''), f'etapa-{x["id"]}'))
     x['status'] = 'feita'
     gravar(r, e)
     return f'etapa {args[0]} feita'
@@ -409,6 +467,17 @@ def cmd_painel(r, args):
     return url
 
 
+def cmd_aberto(r, args):
+    """Código de saída, sem imprimir: 0 com a página do painel da raiz de args[0] aberta."""
+    try:
+        import painel
+        url = painel.achar(raiz(args[0]))
+        with urllib.request.urlopen(f'{url}/aberto', timeout=1) as resp:
+            return 0 if json.load(resp).get('aberto') is True else 1
+    except Exception:
+        return 1
+
+
 def cmd_pausar(r, args):
     e = exigir(r)
     if e['espera'] == 'plano':
@@ -425,6 +494,7 @@ def cmd_adicionar(r, args):
     novas = ler_entrada()
     if isinstance(novas, dict):  # {"mockup": ..., "etapas": [...]}: o ajuste traz a primeira tela
         e['mockup'] = novas.get('mockup') or e.get('mockup')
+        e['tela_existente'] = bool(novas.get('tela_existente', e.get('tela_existente')))
         novas = novas.get('etapas')
     if not isinstance(novas, list) or not novas:
         raise Recusa('adicionar espera uma lista JSON de etapas')
@@ -492,11 +562,111 @@ def aviso_inicio(r, entrada):
     return None
 
 
+def pedir(url, corpo=None):
+    """JSON de uma chamada HTTP curta; erro de rede ou HTTP levanta."""
+    dados = None if corpo is None else json.dumps(corpo).encode()
+    with urllib.request.urlopen(urllib.request.Request(url, data=dados), timeout=1.5) as resp:
+        return json.load(resp)
+
+
+def texto_das(answers):
+    """{"<pergunta>": {"labels", "text"}} -> {"<pergunta>": texto}; texto livre vence os rótulos."""
+    return {q: a.get('text') or ', '.join(a.get('labels') or []) for q, a in answers.items()}
+
+
+def hook_menu(entrada):
+    """PreToolUse de AskUserQuestion: com a página do painel aberta, a pergunta vai ao painel e
+    ao Knobler; vale a 1ª resposta. Sem painel, prazo ou erro: sai mudo e o menu fica no terminal."""
+    import painel
+    import time
+    try:
+        url = painel.achar(raiz(entrada.get('cwd')))
+        if not url or pedir(f'{url}/aberto').get('aberto') is not True:
+            return None
+    except Exception:
+        return None
+    questions = (entrada.get('tool_input') or {}).get('questions')
+    tid = entrada.get('tool_use_id') or ''
+    id_ = f'menu-{tid}'
+    kn = f'http://localhost:{os.environ.get("KNOBLER_PORT", "4477")}'
+    try:
+        pedir(f'{kn}/ask', {'id': id_, 'source': os.path.basename(entrada.get('cwd') or ''),
+                            'questions': questions})
+        knobler = True
+    except Exception:
+        knobler = False
+    no_painel = True
+    fim = time.time() + float(os.environ.get('VESTA_PRAZO_MENU', 3600))
+    intervalo = float(os.environ.get('VESTA_INTERVALO_MENU', 1))
+    answers = None
+    try:
+        pedir(f'{url}/pergunta', {'id': id_, 'questions': questions, 'knobler': knobler})
+        while time.time() < fim and (knobler or no_painel):
+            if no_painel:
+                p = pedir(f'{url}/pergunta/{id_}')
+                if p.get('estado') == 'respondida':
+                    answers, onde = p['answers'], 'painel'
+                    break
+                no_painel = p.get('estado') != 'abandonada'
+            if knobler:
+                k = pedir(f'{kn}/ask/{id_}')
+                if k.get('answered'):
+                    answers, onde = k.get('answers') or {}, 'knobler'
+                    break
+                knobler = not k.get('cancelled')
+            time.sleep(intervalo)
+    except Exception:
+        pass
+    if answers is None or onde == 'painel':
+        try:
+            if knobler:
+                pedir(f'{kn}/ask/{id_}/cancel', {})
+        except Exception:
+            pass
+    if answers is None:
+        return None
+    if onde == 'knobler' and no_painel:
+        try:
+            pedir(f'{url}/pergunta/{id_}/encerrar', {'motivo': 'knobler'})
+        except Exception:
+            pass
+    pasta = os.path.join(os.path.expanduser('~'), '.claude', 'vesta')
+    os.makedirs(pasta, exist_ok=True)
+    with open(os.path.join(pasta, 'respostas.jsonl'), 'a') as f:
+        f.write(json.dumps({'tool_use_id': tid, 'onde': onde}) + '\n')
+    return {'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'permissionDecision': 'allow',
+                                   'updatedInput': {'questions': questions,
+                                                    'answers': texto_das(answers)}}}
+
+
+def hook_ativacao(entrada):
+    """PreToolUse de Skill: ativar a `vesta` sobe o painel da raiz, mesmo sem Vesta no projeto,
+    e abre a página se ela não estiver aberta. Nunca decide a permissão da ferramenta."""
+    if (entrada.get('tool_input') or {}).get('skill') != 'vesta':
+        return None
+    import painel
+    r = raiz(entrada.get('cwd'))
+    try:
+        url = painel.achar(r)
+        if url and pedir(f'{url}/aberto').get('aberto') is True:
+            return None
+    except Exception:
+        pass
+    url = painel.subir(r, forcar=True)
+    if url:
+        try:
+            subprocess.run([os.environ.get('VESTA_ABRIR', 'open'), url], capture_output=True, timeout=5)
+        except Exception:
+            pass
+    return None
+
+
 COMANDOS = {'criar': cmd_criar, 'iniciar': cmd_iniciar, 'mostrar': cmd_mostrar,
             'prova': cmd_prova, 'concluir': cmd_concluir, 'retomar': cmd_retomar,
             'pausar': cmd_pausar, 'adicionar': cmd_adicionar, 'fechar': cmd_fechar,
-            'guarda': cmd_guarda, 'painel': cmd_painel}
-HOOKS = {'hook-parada': hook_parada, 'hook-inicio': hook_inicio, 'hook-adocao': hook_adocao}
+            'guarda': cmd_guarda, 'painel': cmd_painel, 'aberto': cmd_aberto}
+HOOKS = {'hook-parada': hook_parada, 'hook-inicio': hook_inicio, 'hook-adocao': hook_adocao,
+         'hook-menu': hook_menu, 'hook-ativacao': hook_ativacao}
 
 
 def main(argv):
@@ -507,6 +677,8 @@ def main(argv):
     if not argv or argv[0] not in COMANDOS:
         print('uso: vesta.py ' + '|'.join([*COMANDOS, *HOOKS]), file=sys.stderr)
         return 2
+    if argv[0] == 'aberto':  # responde só pelo código de saída
+        return cmd_aberto(None, argv[1:])
     try:
         saida = COMANDOS[argv[0]](raiz(), argv[1:])
     except (Recusa, ValueError) as err:

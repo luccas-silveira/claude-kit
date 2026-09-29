@@ -1,0 +1,21 @@
+[
+  {
+    "selector": "body",
+    "tagName": "body",
+    "rect": null,
+    "isPageLevel": true,
+    "isHidden": false,
+    "findings": [
+      {
+        "type": "overused-font",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "Primary font: geist mono (100% of text)",
+        "ignoreValue": "",
+        "name": "Overused font",
+        "description": "Inter, Roboto, Fraunces, Geist, Plus Jakarta Sans, and Space Grotesk are used on so many sites they no longer feel distinctive. Each new wave of AI-generated UIs converges on the same handful of faces. Choose a face that gives your interface personality."
+      }
+    ]
+  }
+]

@@ -8,6 +8,7 @@
 set -uo pipefail
 PORT="${KNOBLER_PORT:-4477}"
 INPUT="$(cat)"
+python3 "$HOME/.claude/skills/vesta/scripts/vesta.py" aberto "$(printf '%s' "$INPUT" | jq -r '.cwd // ""')" && exit 0
 ID="ask-$$-$(date +%s)"
 
 # source = pasta do projeto da sessão (basename do cwd) — identifica no card

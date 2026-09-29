@@ -7,6 +7,10 @@ Entrada: a spec revisada pelo grill. Saída: o plano em
 `docs/vesta/plans/YYYY-MM-DD-<feature>.md`, commitado, e o estado da execução criado,
 esperando aprovação.
 
+Toda pergunta ao usuário vai pelo `AskUserQuestion`: a opção recomendada vem em primeiro,
+marcada "(Recomendado)", e a resposta livre que ele digitar em "Outro" é aceita como qualquer
+opção.
+
 ## O plano é uma lista de etapas
 
 Etapa é o menor pedaço que carrega a própria prova e que um revisor poderia rejeitar sozinho.
@@ -53,21 +57,25 @@ python3 ~/.claude/skills/vesta/scripts/vesta.py criar <<'JSON'
  "teste": "<comando de teste>",
  "tela": ["<pasta>"],
  "mockup": "docs/vesta/mockups/<pasta>/index.html",
+ "tela_existente": false,
  "etapas": [{"id": "1", "titulo": "<título>", "tela": false}]}
 JSON
 ```
 
 Uma entrada em `etapas` por etapa do plano, com os mesmos ids. `mockup` fica fora só quando
-não há tela; com tela e sem mockup commitado, `iniciar` recusa. O estado nasce esperando
-aprovação: a trava ainda não age.
+não há tela; com tela e sem mockup commitado, `iniciar` recusa. `tela_existente` é `true`
+quando a tela já existe e o mockup tem uma direção só; tela nova leva `false`. O estado nasce
+esperando aprovação: a trava ainda não age.
 
 ## Parada 1
 
 Mensagem ao usuário, cinco linhas: o que o plano vai fazer, quantas etapas, o que trava, o
 que decidir agora, o caminho do plano. Não repita o que está nos arquivos.
 
+Logo depois, a aprovação vai num menu do `AskUserQuestion`: aprovar o plano ou pedir mudança.
+
 Árvore com mudanças que não são do plano: diga na parada 1. A execução não começa com elas, e
-só o usuário decide entre commit e stash.
+só o usuário decide entre commit e stash, num menu.
 
 Aprovado: leia `execucao.md` e siga.
 

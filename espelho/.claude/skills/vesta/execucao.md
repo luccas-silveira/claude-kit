@@ -3,6 +3,10 @@
 Não anuncie a entrada nesta fase. Entre as duas paradas você não escreve nada para o usuário:
 ele não está olhando, e o hook não deixa você parar antes do fim.
 
+Toda pergunta ao usuário vai pelo `AskUserQuestion`: a opção recomendada vem em primeiro,
+marcada "(Recomendado)", e a resposta livre que ele digitar em "Outro" é aceita como qualquer
+opção.
+
 Toda prova passa pelo script, sempre chamado pelo caminho completo, `python3 ~/.claude/skills/vesta/scripts/vesta.py`: cada
 chamada de Bash é um shell novo, e é esse caminho no comando que liga a trava a esta sessão.
 Você nunca edita o estado à mão.
@@ -29,6 +33,11 @@ Você nunca edita o estado à mão.
 6. `python3 ~/.claude/skills/vesta/scripts/vesta.py prova teste N`. Vermelho: retome o mesmo implementador com a saída e volte ao
    passo 5. O script conta as tentativas e trava a etapa na oitava.
 7. Verde: `python3 ~/.claude/skills/vesta/scripts/vesta.py concluir N`.
+
+Etapa com tela: depois do verde, a sessão principal roda o passo 5 da vesta-interface na tela
+servida. Grava as provas da verificação em `<pasta do mockup>/etapa-<id>/`, com os nomes de
+`mockup.md`. Commita as provas, roda `prova teste N` de novo e só então `concluir N`. Sem as
+provas, `concluir` recusa.
 
 As tentativas acontecem dentro do mesmo turno: não pare entre uma e outra.
 
@@ -78,7 +87,7 @@ Regras:
 - Rode o comando de teste antes de responder.
 - Não rode commit e não abra subagentes.
 {só em etapa com Tela: sim}
-- Antes de escrever código de tela, leia ~/.claude/skills/hallmark/SKILL.md e siga.
+- Antes de escrever código de tela, leia ~/.claude/skills/vesta-interface/SKILL.md e siga.
 - O mockup aprovado em {caminho do mockup} é a referência: a tela sai igual a ele.
 
 Responda com o status (DONE ou BLOCKED) e os arquivos mudados.
@@ -90,10 +99,13 @@ Depois de concluir a última etapa, ou quando uma travar, escreva ao usuário em
 que ficou pronto, o que travou e por quê (a linha decisiva da última saída), como testar a
 feature.
 
+Logo depois, a decisão vai num menu do `AskUserQuestion`: aprovar a feature, pedir ajuste ou, com
+etapa travada, insistir.
+
 Etapa travada e o usuário quer insistir: `/vesta-retomar`, que destrava a etapa e zera as
 tentativas. `adicionar` recusa enquanto houver etapa travada.
 
-Ajuste pedido: acrescente as etapas no plano, commite, e registre:
+Ajuste pedido no menu: acrescente as etapas no plano, commite, e registre:
 
 ```bash
 python3 ~/.claude/skills/vesta/scripts/vesta.py adicionar <<'JSON'
@@ -107,4 +119,4 @@ recusa etapa de tela.
 
 Depois volte ao ciclo de etapa.
 
-Usuário aprovou a feature: `python3 ~/.claude/skills/vesta/scripts/vesta.py fechar`.
+Usuário aprovou a feature no menu: `python3 ~/.claude/skills/vesta/scripts/vesta.py fechar`.

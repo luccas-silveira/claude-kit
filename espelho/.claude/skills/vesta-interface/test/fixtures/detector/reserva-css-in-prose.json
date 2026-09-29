@@ -1,0 +1,155 @@
+[
+  {
+    "selector": "h1.gradient-heading",
+    "tagName": "h1",
+    "rect": {
+      "x": 24,
+      "y": 69.46875,
+      "width": 1392,
+      "height": 50,
+      "top": 69.46875,
+      "right": 1416,
+      "bottom": 119.46875,
+      "left": 24
+    },
+    "isPageLevel": false,
+    "isHidden": false,
+    "findings": [
+      {
+        "type": "gradient-text",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "background-clip: text + gradient",
+        "ignoreValue": "",
+        "name": "Gradient text",
+        "description": "Gradient text is decorative rather than meaningful — a common AI tell, especially on headings and metrics. Use solid colors for text."
+      },
+      {
+        "type": "ai-color-palette",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "Purple/violet gradient background",
+        "ignoreValue": "",
+        "name": "AI color palette",
+        "description": "Purple/violet gradients and cyan-on-dark are the most recognizable tells of AI-generated UIs. A gradient in one of those hues is the tell on its own; flat neon ink on a dark ground is charged once a second tell hue joins it. Choose a distinctive, intentional palette."
+      }
+    ]
+  },
+  {
+    "selector": "h2:nth-of-type(1)",
+    "tagName": "h2",
+    "rect": {
+      "x": 24,
+      "y": 148.9375,
+      "width": 1392,
+      "height": 32,
+      "top": 148.9375,
+      "right": 1416,
+      "bottom": 180.9375,
+      "left": 24
+    },
+    "isPageLevel": false,
+    "isHidden": false,
+    "findings": [
+      {
+        "type": "gradient-text",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "background-clip: text + gradient",
+        "ignoreValue": "",
+        "name": "Gradient text",
+        "description": "Gradient text is decorative rather than meaningful — a common AI tell, especially on headings and metrics. Use solid colors for text."
+      },
+      {
+        "type": "ai-color-palette",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "Purple/violet gradient background",
+        "ignoreValue": "",
+        "name": "AI color palette",
+        "description": "Purple/violet gradients and cyan-on-dark are the most recognizable tells of AI-generated UIs. A gradient in one of those hues is the tell on its own; flat neon ink on a dark ground is charged once a second tell hue joins it. Choose a distinctive, intentional palette."
+      }
+    ]
+  },
+  {
+    "selector": "h2.bg-clip-text.bg-gradient-to-r",
+    "tagName": "h2",
+    "rect": {
+      "x": 24,
+      "y": 204.171875,
+      "width": 1392,
+      "height": 27,
+      "top": 204.171875,
+      "right": 1416,
+      "bottom": 231.171875,
+      "left": 24
+    },
+    "isPageLevel": false,
+    "isHidden": false,
+    "findings": [
+      {
+        "type": "gradient-text",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "bg-clip-text + bg-gradient (Tailwind)",
+        "ignoreValue": "",
+        "name": "Gradient text",
+        "description": "Gradient text is decorative rather than meaningful — a common AI tell, especially on headings and metrics. Use solid colors for text."
+      },
+      {
+        "type": "ai-color-palette",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "Purple/violet gradient (Tailwind)",
+        "ignoreValue": "",
+        "name": "AI color palette",
+        "description": "Purple/violet gradients and cyan-on-dark are the most recognizable tells of AI-generated UIs. A gradient in one of those hues is the tell on its own; flat neon ink on a dark ground is charged once a second tell hue joins it. Choose a distinctive, intentional palette."
+      }
+    ]
+  },
+  {
+    "selector": "body",
+    "tagName": "body",
+    "rect": null,
+    "isPageLevel": true,
+    "isHidden": false,
+    "findings": [
+      {
+        "type": "ai-color-palette",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "Purple/violet accent colors detected",
+        "ignoreValue": "",
+        "name": "AI color palette",
+        "description": "Purple/violet gradients and cyan-on-dark are the most recognizable tells of AI-generated UIs. A gradient in one of those hues is the tell on its own; flat neon ink on a dark ground is charged once a second tell hue joins it. Choose a distinctive, intentional palette."
+      },
+      {
+        "type": "gradient-text",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "background-clip: text + gradient",
+        "ignoreValue": "",
+        "name": "Gradient text",
+        "description": "Gradient text is decorative rather than meaningful — a common AI tell, especially on headings and metrics. Use solid colors for text."
+      },
+      {
+        "type": "gradient-text",
+        "category": "slop",
+        "severity": "warning",
+        "advisory": false,
+        "detail": "bg-clip-text + bg-gradient (Tailwind)",
+        "ignoreValue": "",
+        "name": "Gradient text",
+        "description": "Gradient text is decorative rather than meaningful — a common AI tell, especially on headings and metrics. Use solid colors for text."
+      }
+    ]
+  }
+]
