@@ -215,7 +215,7 @@
     {
       "instalar": "curl -fsSL https://claude.ai/install.sh | bash",
       "nome": "claude",
-      "versao": "2.1.284 (Claude Code)"
+      "versao": "2.1.285 (Claude Code)"
     }
   ],
   "repositorios": [
@@ -233,6 +233,11 @@
       "caminho": "__HOME__/Code/vesta",
       "depois": "",
       "remote": "https://github.com/luccas-silveira/vesta.git"
+    },
+    {
+      "caminho": "__HOME__/Code/vesta-interface",
+      "depois": "",
+      "remote": "https://github.com/luccas-silveira/vesta-interface.git"
     },
     {
       "caminho": "__HOME__/claude-code-otel",

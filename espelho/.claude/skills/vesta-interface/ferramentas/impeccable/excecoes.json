@@ -1,9 +1,0 @@
-[
-  {"regra": "overused-font", "valor": "Geist", "motivo": "Decisão 5 da spec: fonte de corpo padrão do hallmark (typography.md:89), recomendada pelo taste; permitida quando serve ao tipo de tela, com a escolha registrada em fontes.md."},
-  {"regra": "overused-font", "valor": "Geist Sans", "motivo": "Decisão 5 da spec: nome alternativo da Geist, a fonte de corpo padrão do hallmark; mesma exceção da Geist."},
-  {"regra": "overused-font", "valor": "Geist Mono", "motivo": "Decisão 5 da spec: par monoespaçado da Geist usado pelas fontes para código e números; permitida quando serve ao tipo de tela."},
-  {"regra": "overused-font", "valor": "Fraunces", "motivo": "Decisão 5 da spec: fonte de título do hallmark, usada no token de exemplo (typography.md:21,58,60); permitida quando serve ao tipo de tela."},
-  {"regra": "overused-font", "valor": "Space Grotesk", "motivo": "Decisão 5 da spec: usada pelo tema Cobalt do hallmark; permitida quando serve ao tipo de tela."},
-  {"regra": "overused-font", "valor": "Plus Jakarta Sans", "motivo": "Decisão 5 da spec: usada pelo tema Hum do hallmark e recomendada pelo taste; permitida quando serve ao tipo de tela."},
-  {"regra": "overused-font", "valor": "Instrument Serif", "motivo": "Decisão 5 da spec: fonte de título do tema Lumen do hallmark e recomendada pelo taste; permitida quando serve ao tipo de tela."}
-]
