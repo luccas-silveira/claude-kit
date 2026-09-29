@@ -19,12 +19,12 @@
     {"nome": "claude", "versao": "claude --version", "instalar": "curl -fsSL https://claude.ai/install.sh | bash"}
   ],
   "repositorios": [
-    {"caminho": "~/Desktop/ZOI/Projetos_ZOI/automaster_v2", "depois": ""},
+    {"caminho": "~/Desktop/ZOI/Projetos_ZOI/automaster_v2", "destino": "~/Code/automaster", "depois": ""},
     {"caminho": "~/Code/whatsapp-mcp", "depois": "cd whatsapp-bridge && ./servico.sh"},
     {"caminho": "~/Code/vesta", "depois": ""},
     {"caminho": "~/Code/vesta-interface", "depois": ""},
     {"caminho": "~/claude-code-otel", "depois": "docker compose up -d"},
-    {"caminho": "~/Documents/2. ZOI/ghl-docs", "depois": ""}
+    {"caminho": "~/Documents/2. ZOI/ghl-docs", "destino": "~/Code/ghl-docs", "depois": ""}
   ],
   "credenciais": [
     "~/.config/zoi",

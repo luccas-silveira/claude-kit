@@ -6,11 +6,11 @@ description: Offline reference for the GoHighLevel (GHL / LeadConnector / HighLe
 # GoHighLevel API Reference (offline mirror)
 
 A local, AI-optimized mirror of the GHL Marketplace docs (v3) is bundled with this
-skill at `docs/` (a symlink to `~/Documents/ghl-docs`, the git-versioned canonical copy):
+skill at `docs/` (a symlink to the `docs` folder next to this skill, the git-versioned canonical copy):
 
 ```
 <skill dir>/docs/        # 828 pages, organized by resource
-~/Documents/ghl-docs/    # same files, canonical location
+the `docs` folder next to this skill    # same files, canonical location
 ```
 
 Use it instead of guessing endpoint shapes or fetching the web.

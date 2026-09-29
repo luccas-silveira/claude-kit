@@ -97,7 +97,7 @@ origem, ele avisa e não reinstala.
 
 ### Repositórios de apoio
 
-Clonados no mesmo caminho da origem:
+Cada repositório é clonado em `~/Code/<nome>`:
 
 | Repositório | Pra quê |
 |---|---|

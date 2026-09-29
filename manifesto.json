@@ -58,7 +58,7 @@
     },
     {
       "fonte": {
-        "path": "__HOME__/Desktop/ZOI/Projetos_ZOI/automaster_v2",
+        "path": "__HOME__/Code/automaster",
         "source": "directory"
       },
       "nome": "zoi"
@@ -180,7 +180,7 @@
     {
       "instalar": "npm install -g @nanonets/graft || npm install -g --prefix ~/.local @nanonets/graft",
       "nome": "graft",
-      "versao": "0.19.0"
+      "versao": "0.21.1"
     },
     {
       "instalar": "curl -fsSL https://raw.githubusercontent.com/vshulcz/deja-vu/main/install.sh | sh",
@@ -220,7 +220,7 @@
   ],
   "repositorios": [
     {
-      "caminho": "__HOME__/Desktop/ZOI/Projetos_ZOI/automaster_v2",
+      "caminho": "__HOME__/Code/automaster",
       "depois": "",
       "remote": "https://github.com/zoi-tech/automaster.git"
     },
@@ -245,7 +245,7 @@
       "remote": "https://github.com/ColeMurray/claude-code-otel"
     },
     {
-      "caminho": "__HOME__/Documents/2. ZOI/ghl-docs",
+      "caminho": "__HOME__/Code/ghl-docs",
       "depois": "",
       "remote": "https://github.com/luccas-silveira/ghl-docs.git"
     }
