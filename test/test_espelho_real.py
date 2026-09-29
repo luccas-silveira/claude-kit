@@ -66,6 +66,25 @@ class TestEspelhoReal(unittest.TestCase):
         self.assertIn('luccas-silveira/ghl-docs', caminhos.get('ghl-docs', ''))
         self.assertNotIn('claude-tooling', json.dumps(repos))
 
+    def test_mcp_de_npm_tem_quem_instale(self):
+        """MCP que roda de uma pasta npm local precisa de um programa que instale essa pasta."""
+        with open(os.path.join(ESPELHO, 'mcp.json'), encoding='utf-8') as f:
+            servidores = json.load(f)['global']
+        instalar = ' '.join(p['instalar'] for p in manifesto()['programas']).replace(
+            '$HOME', '__HOME__')
+        orfaos = [n for n, s in servidores.items() if '/node_modules/.bin/' in s.get('command', '')
+                  and s['command'].split('/node_modules/')[0] not in instalar]
+        self.assertEqual(orfaos, [])
+
+    def test_app_detectado_sem_depender_do_brew(self):
+        """App instalado fora do Homebrew conta como instalado; senão o brew tenta por cima."""
+        with open(os.path.join(KIT, 'fontes.json'), encoding='utf-8') as f:
+            comandos = {p['nome']: p['versao'] for p in json.load(f)['programas']}
+        versoes = {p['nome']: p['versao'] for p in manifesto()['programas']}
+        for nome in ['supacode', 'knobler']:
+            self.assertNotIn('brew list', comandos[nome], nome)
+            self.assertIsNotNone(versoes[nome], nome)
+
     def test_manifesto_sem_termo_bloqueado(self):
         self.assertTrue(os.path.isfile(MANIFESTO), 'manifesto.json ausente')
         if not os.path.isfile(BLOQUEIO):

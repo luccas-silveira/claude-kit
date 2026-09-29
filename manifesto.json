@@ -138,6 +138,11 @@
       "versao": "v26.5.0"
     },
     {
+      "instalar": "npm install --prefix \"$HOME/.local/share/vesta-interface/mcp\" --no-audit --no-fund --save-exact @playwright/mcp@0.0.82 chrome-devtools-mcp@1.10.1",
+      "nome": "mcp-navegador",
+      "versao": "Version 0.0.82\n1.10.1"
+    },
+    {
       "instalar": "brew install python@3.13",
       "nome": "python@3.13",
       "versao": "Python 3.13.13"
@@ -200,12 +205,12 @@
     {
       "instalar": "brew install --cask supacode",
       "nome": "supacode",
-      "versao": null
+      "versao": "0.10.8"
     },
     {
       "instalar": "brew install --cask luccas-silveira/knobler/knobler",
       "nome": "knobler",
-      "versao": "knobler 0.35.2"
+      "versao": "0.35.2"
     },
     {
       "instalar": "curl -fsSL https://claude.ai/install.sh | bash",

@@ -6,6 +6,8 @@ aqui é o que roda na máquina de origem, na mesma configuração.
 
 `install.sh` deixa um Mac igual à origem. `sync.sh` roda na origem e publica o estado atual.
 
+Agente de IA instalando o kit: siga o [INSTALAR.md](INSTALAR.md) antes de qualquer comando.
+
 ## Antes de instalar
 
 Este é o setup de uma pessoa, não um framework configurável. O instalador **espelha**: o que
@@ -85,7 +87,7 @@ Mais a statusline (`statusline.sh`) e o agente `web-search-agent` para pesquisa 
 ### Programas
 
 Via Homebrew: `node`, `python@3.13`, `uv`, `jq`, `gh`, `go`, `ffmpeg`, `yt-dlp`, `docker`,
-`supacode`, `knobler`. Via npm: `graft`. Via uv: `headroom-ai`, `scrapling`. Script oficial:
+`supacode`, `knobler`. Via npm: `graft` e os pacotes dos MCPs `playwright` e `chrome-devtools`. Via uv: `headroom-ai`, `scrapling`. Script oficial:
 `deja` e o próprio Claude Code.
 
 O instalador só instala o que falta, na versão mais nova. Se a versão de lá for diferente da
@@ -103,6 +105,8 @@ Clonados no mesmo caminho da origem:
 | `ColeMurray/claude-code-otel` | Métricas do Claude Code em Grafana; sobe com `docker compose`. |
 
 ## Instalar
+
+Se quem instala é um agente, o roteiro dele é o [INSTALAR.md](INSTALAR.md).
 
 ```bash
 git clone https://github.com/luccas-silveira/claude-kit && bash claude-kit/install.sh

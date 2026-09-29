@@ -1,6 +1,7 @@
 {
   "programas": [
     {"nome": "node", "versao": "node --version", "instalar": "brew install node"},
+    {"nome": "mcp-navegador", "versao": "sh -c '\"$HOME/.local/share/vesta-interface/mcp/node_modules/.bin/playwright-mcp\" --version && \"$HOME/.local/share/vesta-interface/mcp/node_modules/.bin/chrome-devtools-mcp\" --version'", "instalar": "npm install --prefix \"$HOME/.local/share/vesta-interface/mcp\" --no-audit --no-fund --save-exact @playwright/mcp@0.0.82 chrome-devtools-mcp@1.10.1"},
     {"nome": "python@3.13", "versao": "python3.13 --version", "instalar": "brew install python@3.13"},
     {"nome": "uv", "versao": "uv --version", "instalar": "brew install uv"},
     {"nome": "jq", "versao": "jq --version", "instalar": "brew install jq"},
@@ -13,8 +14,8 @@
     {"nome": "headroom-ai", "versao": "headroom --version", "instalar": "uv tool install headroom-ai"},
     {"nome": "scrapling", "versao": "scrapling --version", "instalar": "uv tool install 'scrapling[ai]'"},
     {"nome": "docker", "versao": "docker --version", "instalar": "brew install --cask docker"},
-    {"nome": "supacode", "versao": "brew list --cask --versions supacode", "instalar": "brew install --cask supacode"},
-    {"nome": "knobler", "versao": "brew list --cask --versions knobler", "instalar": "brew install --cask luccas-silveira/knobler/knobler"},
+    {"nome": "supacode", "versao": "defaults read /Applications/supacode.app/Contents/Info CFBundleShortVersionString", "instalar": "brew install --cask supacode"},
+    {"nome": "knobler", "versao": "defaults read /Applications/Knobler.app/Contents/Info CFBundleShortVersionString", "instalar": "brew install --cask luccas-silveira/knobler/knobler"},
     {"nome": "claude", "versao": "claude --version", "instalar": "curl -fsSL https://claude.ai/install.sh | bash"}
   ],
   "repositorios": [
