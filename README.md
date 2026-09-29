@@ -44,7 +44,7 @@ Se você quer só uma peça, pegue a pasta dela em `espelho/.claude/` e copie à
 | `grill-me` | Entrevista cerrada sobre um plano até cada decisão estar resolvida. |
 | `prompt-engineering` | Escreve e audita system prompts de agentes. |
 | `supacode-cli`, `supacode-deeplinks` | Controla o Supacode pelo terminal ou por URL. |
-| `vesta-interface` | Desenha e revisa telas, páginas e componentes; camada de interface da Vesta. Link para `~/Code/vesta-interface`, instalado pelo `install.sh` de lá. |
+| `vesta-interface` | Desenha e revisa telas, páginas e componentes; camada de interface da Vesta. Link para o clone em `~/Code/vesta-interface` (repositório abaixo). |
 
 ### Plugins
 
@@ -99,6 +99,7 @@ Clonados no mesmo caminho da origem:
 |---|---|
 | `zoi-tech/automaster` | Servidor do plugin `automaster`. |
 | `luccas-silveira/vesta` | A skill `vesta` e seus comandos, ligados por link ao clone. A cada parada, a Vesta confere se há versão nova aqui e se atualiza. |
+| `luccas-silveira/vesta-interface` | A skill `vesta-interface`, ligada por link ao clone, com o detector de interface e os catálogos. |
 | `luccas-silveira/whatsapp-mcp` | Ponte do WhatsApp usada pelo MCP `whatsapp`; o `servico.sh` compila e liga como serviço do macOS, que sobe no login e volta sozinho quando cai. |
 | `luccas-silveira/ghl-docs` | Espelho da documentação do GoHighLevel. |
 | `ColeMurray/claude-code-otel` | Métricas do Claude Code em Grafana; sobe com `docker compose`. |
