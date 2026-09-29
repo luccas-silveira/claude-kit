@@ -24,8 +24,7 @@
     {"caminho": "~/Code/vesta", "depois": ""},
     {"caminho": "~/Code/vesta-interface", "depois": ""},
     {"caminho": "~/claude-code-otel", "depois": "docker compose up -d"},
-    {"caminho": "~/Documents/2. ZOI/ghl-docs", "depois": ""},
-    {"caminho": "~/Code/claude-tooling", "depois": ""}
+    {"caminho": "~/Documents/2. ZOI/ghl-docs", "depois": ""}
   ],
   "credenciais": [
     "~/.config/zoi",

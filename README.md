@@ -1,5 +1,9 @@
 # claude-kit
 
+O ClaudeKit é o conjunto de ferramentas que uso no Claude Code: skills, MCPs, hooks, estilos e
+programas, documentado e instalável por qualquer pessoa. Leva as ferramentas, nunca as
+informações: sem memória, sem dados de cliente, sem credenciais.
+
 O Claude Code de uma máquina, empacotado para ser reproduzido em outra. Skills, plugins,
 servidores MCP, hooks, output styles, programas e repositórios de apoio: tudo o que está
 aqui é o que roda na máquina de origem, na mesma configuração.
