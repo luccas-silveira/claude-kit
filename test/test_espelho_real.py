@@ -107,6 +107,48 @@ class TestEspelhoReal(unittest.TestCase):
             texto = f.read().lower()
         self.assertEqual([t for t in termos if t in texto], [])
 
+    def test_kit_sem_caminho_da_zoi(self):
+        """O kit não carrega a pasta de trabalho da ZOI: nem em arquivo, nem no manifesto, nem em link."""
+        termos = [b'Projetos_ZOI', b'2. ZOI']
+        achados = []
+        for d, nomes, arqs in os.walk(ESPELHO):
+            for n in nomes + arqs:
+                p = os.path.join(d, n)
+                rel = os.path.relpath(p, ESPELHO)
+                if os.path.islink(p):
+                    if 'ZOI' in os.readlink(p):
+                        achados.append(rel + ' -> ' + os.readlink(p))
+                    continue
+                if os.path.isfile(p):
+                    with open(p, 'rb') as f:
+                        dados = f.read()
+                    if any(t in dados for t in termos):
+                        achados.append(rel)
+        with open(MANIFESTO, 'rb') as f:
+            if any(t in f.read() for t in termos):
+                achados.append('manifesto.json')
+        self.assertEqual(achados, [])
+
+    def test_destino_dos_repositorios(self):
+        repos = {r['caminho']: r['remote'] for r in manifesto()['repositorios']}
+        self.assertEqual(repos.get('__HOME__/Code/automaster'),
+                         'https://github.com/zoi-tech/automaster.git')
+        self.assertEqual(repos.get('__HOME__/Code/ghl-docs'),
+                         'https://github.com/luccas-silveira/ghl-docs.git')
+
+    def test_marketplace_zoi_aponta_para_o_clone_do_automaster(self):
+        mkt = json.loads(ler('.claude/settings.json'))['extraKnownMarketplaces']['zoi']
+        caminhos = [r['caminho'] for r in manifesto()['repositorios']
+                    if r['remote'].rstrip('/').removesuffix('.git').endswith('/automaster')]
+        self.assertEqual(caminhos, ['__HOME__/Code/automaster'])
+        self.assertEqual(mkt['source']['path'], caminhos[0])
+
+    def test_skill_ghl_api_docs_usa_a_pasta_ao_lado(self):
+        link = os.path.join(ESPELHO, '.claude/skills/ghl-api-docs/docs')
+        self.assertTrue(os.path.islink(link), 'skills/ghl-api-docs/docs não é link')
+        self.assertEqual(os.readlink(link), '__HOME__/Code/ghl-docs')
+        self.assertNotIn('Documents/ghl-docs', ler('.claude/skills/ghl-api-docs/SKILL.md'))
+
 
 if __name__ == '__main__':
     unittest.main()
