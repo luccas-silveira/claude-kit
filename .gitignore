@@ -3,3 +3,4 @@ node_modules/
 graft/
 __pycache__/
 .ignore
+!espelho/.claude/settings.local.json
