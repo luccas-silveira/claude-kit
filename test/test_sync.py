@@ -278,3 +278,53 @@ class TestSync(KitCaso):
         self.assertIn(os.path.join(self.kit, 'manifesto.json'), antes)
         self.sync()
         self.assertEqual(self.foto(), antes)
+
+
+class TestDestino(KitCaso):
+    """Etapa 1: `destino` troca o caminho de origem no espelho (texto, JSON escapado, links)."""
+    def com_destino(self, *pares):
+        for origem, destino in pares:
+            if origem:
+                self.repo('Code/' + origem, 'git@x:y/%s.git' % origem)
+        self.fontes({'repositorios': [
+            dict({'caminho': '~/Code/' + o, 'depois': ''}, **({'destino': '~/Code/' + d} if d else {}))
+            for o, d in pares]})
+
+    def test_texto_cita_destino_e_nao_a_origem(self):
+        self.com_destino(('origem-r', 'destino-r'))
+        self.escreve('.claude/settings.json', json.dumps(
+            {'p': self.home + '/Code/origem-r', 'q': self.home + '/Code/origem-r/bin/x'}))
+        self.sync()
+        texto = self.le(self.no_kit('.claude/settings.json'))
+        self.assertIn('__HOME__/Code/destino-r"', texto)
+        self.assertIn('__HOME__/Code/destino-r/bin/x', texto)
+        self.assertNotIn('origem-r', texto)
+
+    def test_texto_com_barra_escapada(self):
+        self.com_destino(('origem-r', 'destino-r'))
+        self.escreve('.claude/settings.json',
+                     '{"p": "%s"}' % (self.home + '/Code/origem-r').replace('/', '\\/'))
+        self.sync()
+        texto = self.le(self.no_kit('.claude/settings.json'))
+        self.assertIn('__HOME__\\/Code\\/destino-r', texto)
+        self.assertNotIn('origem-r', texto)
+
+    def test_link_para_repositorio_com_destino(self):
+        r = self.com_destino(('origem-r', 'destino-r')) or os.path.join(self.home, 'Code/origem-r')
+        self.escreve('Code/origem-r/skills/s/SKILL.md', 'no repo')
+        os.makedirs(os.path.join(self.home, '.claude/skills'))
+        os.symlink(os.path.join(r, 'skills/s'), os.path.join(self.home, '.claude/skills/s'))
+        self.sync()
+        l = self.no_kit('.claude/skills/s')
+        self.assertTrue(os.path.islink(l))
+        self.assertEqual(os.readlink(l), '__HOME__/Code/destino-r/skills/s')
+
+    def test_prefixo_nao_troca_repositorio_vizinho(self):
+        self.com_destino(('vesta', 'vesta-novo'), ('vesta-interface', None))
+        self.escreve('.claude/settings.json', json.dumps(
+            {'a': self.home + '/Code/vesta', 'b': self.home + '/Code/vesta-interface',
+             'c': self.home + '/Code/vesta/x'}))
+        self.sync()
+        d = json.loads(self.le(self.no_kit('.claude/settings.json')))
+        self.assertEqual(d, {'a': '__HOME__/Code/vesta-novo', 'b': '__HOME__/Code/vesta-interface',
+                             'c': '__HOME__/Code/vesta-novo/x'})
