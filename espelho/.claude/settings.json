@@ -35,7 +35,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "sonnet",
   "skillOverrides": {
     "archify": "off",
     "deja-history": "off",
@@ -373,10 +373,10 @@
       "effortLevel": "low"
     },
     "claude-opus-5-5": {
-      "effortLevel": "medium"
+      "effortLevel": "high"
     },
     "claude-sonnet-5-5": {
-      "effortLevel": "low"
+      "effortLevel": "medium"
     }
   },
   "awaySummaryEnabled": false,
