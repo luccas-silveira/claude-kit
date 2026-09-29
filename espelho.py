@@ -84,6 +84,14 @@ def escrever_json(caminho, dados, home):
         f.write(texto.replace(home, MARCA))
 
 
+def trocar(texto, mapa):
+    """Troca cada caminho de origem pelo destino, só quando é o caminho inteiro."""
+    for o, d in mapa:
+        for o, d in ((o, d), (o.replace('/', '\\/'), d.replace('/', '\\/'))):
+            texto = re.sub(re.escape(o) + r'(?![\w.-])', lambda _: d, texto)
+    return texto
+
+
 def espelhar(origem, destino, rel, ctx):
     """Copia origem (caminho lógico sob o home) para destino, trocando o home por __HOME__."""
     if os.path.basename(origem) in EXCLUIR_NOME or rel in EXCLUIR_REL or origem in ctx['cred']:
@@ -94,7 +102,7 @@ def espelhar(origem, destino, rel, ctx):
     if os.path.islink(origem):
         real = os.path.realpath(origem)
         if any(real == r or real.startswith(r + os.sep) for r in ctx['repos']):
-            os.symlink(real.replace(ctx['home'], MARCA), destino)
+            os.symlink(trocar(real, ctx.get('mapa', [])).replace(ctx['home'], MARCA), destino)
             return
         if not os.path.exists(real):
             return
@@ -107,7 +115,7 @@ def espelhar(origem, destino, rel, ctx):
     with open(origem, 'rb') as f:
         dados = f.read()
     try:
-        texto = dados.decode('utf-8')
+        texto = trocar(dados.decode('utf-8'), ctx.get('mapa', []))
         if not ctx.get('para'):  # JSON pode vir com a barra escapada: \/Users\/x
             texto = texto.replace(ctx['home'].replace('/', '\\/'), MARCA)
         dados = texto.replace(ctx['home'], ctx.get('para', MARCA)).encode('utf-8')
@@ -124,9 +132,12 @@ def sync(args):
     fontes = ler_json(os.path.join(kit, 'fontes.json'), {})
     expandir = lambda c: os.path.join(home, c[2:]) if c.startswith('~/') else c
     cred = [expandir(c) for c in fontes.get('credenciais', [])]
-    repos = [dict(r, caminho=expandir(r['caminho'])) for r in fontes.get('repositorios', [])]
+    repos = [dict(r, caminho=expandir(r['caminho']), destino=expandir(r.get('destino', r['caminho'])))
+             for r in fontes.get('repositorios', [])]
     ctx = {'home': home, 'cred': set(cred),
-           'repos': [os.path.realpath(r['caminho']) for r in repos]}
+           'repos': [os.path.realpath(r['caminho']) for r in repos],
+           'mapa': sorted(((r['caminho'], r['destino']) for r in repos if r['destino'] != r['caminho']),
+                          key=lambda p: -len(p[0]))}
 
     bloqueio = os.path.join(home, BLOQUEIO)
     try:
