@@ -328,3 +328,55 @@ class TestDestino(KitCaso):
         d = json.loads(self.le(self.no_kit('.claude/settings.json')))
         self.assertEqual(d, {'a': '__HOME__/Code/vesta-novo', 'b': '__HOME__/Code/vesta-interface',
                              'c': '__HOME__/Code/vesta-novo/x'})
+
+
+class TestDestinoManifesto(KitCaso):
+    """Etapa 2: o mapa vale também para mcp.json e manifesto.json, e os dois concordam."""
+    def com_destino(self):
+        self.repo('Code/origem-r', 'git@x:y/origem-r.git')
+        self.fontes({'repositorios': [
+            {'caminho': '~/Code/origem-r', 'depois': '', 'destino': '~/Code/destino-r'}]})
+
+    def marketplace(self, nome='mk'):
+        return {nome: {'source': {'source': 'directory', 'path': self.home + '/Code/origem-r'}}}
+
+    def test_manifesto_repositorio_sai_com_destino_e_remote_da_origem(self):
+        self.com_destino()
+        self.sync()
+        repos = self.manifesto()['repositorios']
+        self.assertEqual(len(repos), 1)
+        self.assertEqual(repos[0]['caminho'], '__HOME__/Code/destino-r')
+        self.assertEqual(repos[0]['remote'], 'git@x:y/origem-r.git')
+
+    def test_manifesto_marketplace_directory_sai_com_destino(self):
+        self.com_destino()
+        self.escreve('.claude/plugins/known_marketplaces.json', json.dumps(self.marketplace()))
+        self.sync()
+        mks = self.manifesto()['marketplaces']
+        self.assertEqual(mks, [{'nome': 'mk', 'fonte': {
+            'source': 'directory', 'path': '__HOME__/Code/destino-r'}}])
+
+    def test_mcp_json_global_cita_destino(self):
+        self.com_destino()
+        self.escreve('.claude.json', json.dumps(
+            {'mcpServers': {'g': {'command': self.home + '/Code/origem-r/bin/x'}}}))
+        self.sync()
+        texto = self.le(self.no_kit('mcp.json'))
+        self.assertNotIn('origem-r', texto)
+        self.assertEqual(json.loads(texto)['global'],
+                         {'g': {'command': '__HOME__/Code/destino-r/bin/x'}})
+
+    def test_settings_marketplace_manifesto_e_repositorio_concordam(self):
+        self.com_destino()
+        self.escreve('.claude/settings.json',
+                     json.dumps({'extraKnownMarketplaces': {'mk': {
+                         'source': {'source': 'directory', 'path': self.home + '/Code/origem-r'}}}}))
+        self.escreve('.claude/plugins/known_marketplaces.json', json.dumps(self.marketplace()))
+        self.sync()
+        m = self.manifesto()
+        no_settings = json.loads(self.le(self.no_kit('.claude/settings.json')))[
+            'extraKnownMarketplaces']['mk']['source']['path']
+        no_manifesto = m['marketplaces'][0]['fonte']['path']
+        self.assertEqual(no_settings, '__HOME__/Code/destino-r')
+        self.assertEqual(no_settings, no_manifesto)
+        self.assertEqual(no_manifesto, m['repositorios'][0]['caminho'])
