@@ -20,7 +20,8 @@
   ],
   "repositorios": [
     {"caminho": "~/Desktop/ZOI/Projetos_ZOI/automaster_v2", "depois": ""},
-    {"caminho": "~/Code/whatsapp-mcp", "depois": "cd whatsapp-bridge && go build"},
+    {"caminho": "~/Code/whatsapp-mcp", "depois": "cd whatsapp-bridge && go build && ./servico.sh"},
+    {"caminho": "~/Code/vesta", "depois": ""},
     {"caminho": "~/claude-code-otel", "depois": "docker compose up -d"},
     {"caminho": "~/Documents/2. ZOI/ghl-docs", "depois": ""},
     {"caminho": "~/Code/claude-tooling", "depois": ""}

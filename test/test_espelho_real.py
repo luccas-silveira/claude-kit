@@ -85,6 +85,18 @@ class TestEspelhoReal(unittest.TestCase):
             self.assertNotIn('brew list', comandos[nome], nome)
             self.assertIsNotNone(versoes[nome], nome)
 
+    def test_vesta_e_link_para_o_clone(self):
+        """Link, não cópia: é o clone que o `vesta.py atualizar` avança."""
+        link = os.path.join(ESPELHO, '.claude/skills/vesta')
+        self.assertTrue(os.path.islink(link), 'skills/vesta virou cópia')
+        self.assertEqual(os.readlink(link), '__HOME__/Code/vesta/skill')
+        remotes = [r['remote'] for r in manifesto()['repositorios']]
+        self.assertTrue(any('luccas-silveira/vesta' in r for r in remotes), remotes)
+
+    def test_ponte_do_whatsapp_vira_servico(self):
+        depois = {r['caminho'].rsplit('/', 1)[-1]: r['depois'] for r in manifesto()['repositorios']}
+        self.assertIn('./servico.sh', depois['whatsapp-mcp'])
+
     def test_manifesto_sem_termo_bloqueado(self):
         self.assertTrue(os.path.isfile(MANIFESTO), 'manifesto.json ausente')
         if not os.path.isfile(BLOQUEIO):

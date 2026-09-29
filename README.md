@@ -18,7 +18,7 @@ não está no kit sai da sua máquina.
 - Antes de mexer em qualquer coisa, ele guarda o estado anterior em
   `~/claude-espelho-<data>.tar.gz`. Dá para desfazer (veja abaixo).
 - Seu `CLAUDE.md`, sua memória, seus projetos e suas credenciais não são tocados.
-- Dois repositórios de apoio são privados (`whatsapp-mcp`, `ghl-docs`). Sem
+- Três repositórios de apoio são privados (`vesta`, `whatsapp-mcp`, `ghl-docs`). Sem
   acesso, o clone falha, entra na lista de falhas e o resto da instalação segue.
 - Feito para macOS com Homebrew. Precisa do Claude Code já instalado.
 
@@ -99,8 +99,9 @@ Clonados no mesmo caminho da origem:
 
 | Repositório | Pra quê |
 |---|---|
-| `zoi-tech/automaster_v2` (privado) | Servidor do plugin `automaster`. |
-| `luccas-silveira/whatsapp-mcp` (privado) | Ponte do WhatsApp usada pelo MCP `whatsapp`; compila com `go build`. |
+| `zoi-tech/automaster` | Servidor do plugin `automaster`. |
+| `luccas-silveira/vesta` (privado) | A skill `vesta` e seus comandos, ligados por link ao clone. A cada parada, a Vesta confere se há versão nova aqui e se atualiza. |
+| `luccas-silveira/whatsapp-mcp` (privado) | Ponte do WhatsApp usada pelo MCP `whatsapp`; compila com `go build` e roda como serviço do macOS, que sobe no login e volta sozinho quando cai. |
 | `luccas-silveira/ghl-docs` (privado) | Espelho da documentação do GoHighLevel. |
 | `ColeMurray/claude-code-otel` | Métricas do Claude Code em Grafana; sobe com `docker compose`. |
 
@@ -121,7 +122,7 @@ Fora do kit: o `CLAUDE.md` global, toda a memória e as credenciais. O instalado
 credenciais faltam, só pelo caminho.
 
 Manual depois de instalar: copiar as credenciais, fazer login no Claude Code, ler o QR do
-WhatsApp e iniciar a ponte, rodar `graft init` em cada repositório.
+WhatsApp (`tail -f ~/Library/Logs/whatsapp-bridge.log`), rodar `graft init` em cada repositório.
 
 ## Desfazer
 

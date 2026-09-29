@@ -226,8 +226,13 @@
     },
     {
       "caminho": "__HOME__/Code/whatsapp-mcp",
-      "depois": "cd whatsapp-bridge && go build",
+      "depois": "cd whatsapp-bridge && go build && ./servico.sh",
       "remote": "https://github.com/luccas-silveira/whatsapp-mcp.git"
+    },
+    {
+      "caminho": "__HOME__/Code/vesta",
+      "depois": "",
+      "remote": "https://github.com/luccas-silveira/vesta.git"
     },
     {
       "caminho": "__HOME__/claude-code-otel",

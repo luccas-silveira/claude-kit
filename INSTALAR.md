@@ -40,7 +40,7 @@ gh auth status          # necessário para os repositórios privados e para abri
 ```
 
 Sem `gh` logado, peça ao usuário para rodar `! gh auth login`. Sem acesso aos repositórios
-privados (`zoi-tech/automaster`, `luccas-silveira/whatsapp-mcp`, `luccas-silveira/ghl-docs`),
+privados (`luccas-silveira/vesta`, `luccas-silveira/whatsapp-mcp`, `luccas-silveira/ghl-docs`),
 peça o acesso ao usuário antes de instalar: sem eles a instalação não fica completa.
 
 ## 2. Instalar
@@ -76,9 +76,10 @@ estar aberto para o `docker compose`.
 Credenciais: para cada caminho em `credenciais ausentes:`, peça ao usuário para copiar da
 máquina de origem para o mesmo caminho nesta. Confira com `ls` depois.
 
-WhatsApp: peça ao usuário para rodar, num terminal separado, `cd ~/Code/whatsapp-mcp/whatsapp-bridge && ./whatsapp-bridge`
-e ler o QR com o celular. Se a pasta `store` veio da origem, conecta sem QR. A ponte precisa
-ficar rodando.
+WhatsApp: o instalador liga a ponte como serviço do macOS, que sobe no login e volta sozinho
+quando cai. Se a pasta `store` veio da origem, ela conecta sem QR. Senão, peça ao usuário para
+rodar `tail -f ~/Library/Logs/whatsapp-bridge.log` num terminal e ler o QR com o celular. Se
+o serviço não estiver de pé, rode `~/Code/whatsapp-mcp/whatsapp-bridge/servico.sh`.
 
 graft: pergunte em quais repositórios o usuário trabalha e rode `graft init` em cada um.
 
@@ -155,6 +156,8 @@ for c in m['credenciais']:
 for p in json.load(open('fontes.json'))['programas']:
     if subprocess.run(p['versao'], shell=True, capture_output=True).returncode:
         erros.append('programa ausente: ' + p['nome'])
+if subprocess.run(['launchctl', 'list', 'com.whatsapp-mcp.bridge'], capture_output=True).returncode:
+    erros.append('serviço da ponte do WhatsApp não está carregado')
 print('\n'.join(erros) or 'OK')
 PY
 ```
