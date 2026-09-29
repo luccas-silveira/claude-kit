@@ -29,6 +29,10 @@ por `__HOME__`. O manifesto passa a listar o destino como `caminho`; o instalado
 2. Aplicação do mapa em `espelhar` (texto e link simbólico) e em `escrever_json`.
 3. `fontes.json`: `destino` para `automaster` (`~/Code/automaster`) e `ghl-docs`
    (`~/Code/ghl-docs`).
+4. `README.md`: a frase "clonados no mesmo caminho da origem" passa a dizer que cada
+   repositório vai para `~/Code/<nome>`.
+5. `~/.claude/skills/ghl-api-docs/SKILL.md`: o texto deixa de citar `~/Documents/ghl-docs` e
+   aponta para a pasta `docs` ao lado da skill (o próximo sync leva a mudança para o kit).
 
 ## Erros e limites
 
@@ -50,3 +54,22 @@ própria origem criaria clones novos em `~/Code`; a origem não roda `install`.
 2. Prefixo: `~/Code/vesta` com destino não altera `~/Code/vesta-interface`.
 3. Sem `destino`: saída idêntica à de hoje.
 4. Kit real: `test_espelho_real` passa a exigir que os caminhos `ZOI` antigos não apareçam.
+5. Consistência: o caminho do marketplace `zoi` no `settings.json` do espelho é o mesmo do
+   `caminho` do repositório `automaster` no manifesto.
+
+## Decisões do grill
+
+- **A6** — exigido o teste que compara o caminho do marketplace no `settings.json` com o do
+  manifesto. Motivo: sem ele, uma troca aplicada só num dos dois lugares deixa o plugin
+  apontando para pasta que o instalador não clonou, e `desligar_sem_fonte` não pega
+  (`espelho.py:346-360`).
+- **A4** — README entra no escopo. Motivo: `README.md:99-110` fica falso para `automaster` e
+  `ghl-docs`.
+- **A3** — texto da skill `ghl-api-docs` entra no escopo. Motivo: cita
+  `~/Documents/ghl-docs`, caminho que não existe na origem nem no destino
+  (`SKILL.md:9`, `:13`).
+- **A5** — descartado. Motivo: as duas origens são pastas reais, não links simbólicos; o
+  caminho lógico é igual ao real.
+- **A8** — mantido como está. Motivo: `mcp.json` continua entre os arquivos trocados por
+  robustez, mesmo sem ocorrência hoje.
+- **A1, A2, A7** — confirmam a spec, sem mudança.
