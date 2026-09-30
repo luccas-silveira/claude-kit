@@ -8,7 +8,8 @@
     "OTEL_LOGS_EXPORTER": "otlp",
     "OTEL_LOGS_EXPORT_INTERVAL": "5000",
     "OTEL_METRICS_EXPORTER": "otlp",
-    "OTEL_METRIC_EXPORT_INTERVAL": "10000"
+    "OTEL_METRIC_EXPORT_INTERVAL": "10000",
+    "GRAFT_NO_STATUSLINE": "1"
   },
   "permissions": {
     "allow": [
@@ -302,9 +303,7 @@
     "type": "command",
     "command": "bash __HOME__/.claude/statusline.sh"
   },
-  "footerLinksRegexes": [
-    "graft/[\\w./-]+\\.md"
-  ],
+  "footerLinksRegexes": [],
   "enabledPlugins": {
     "automaster@zoi": true,
     "caveman@caveman": true,
@@ -378,7 +377,7 @@
       "effortLevel": "low"
     },
     "claude-sonnet-5-5": {
-      "effortLevel": "medium"
+      "effortLevel": "high"
     }
   },
   "awaySummaryEnabled": false,
