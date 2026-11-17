@@ -3,16 +3,17 @@
     "__HOME__/.config/zoi",
     "__HOME__/.config/watch/.env",
     "__HOME__/.config/gh/hosts.yml",
+    "__HOME__/Code/video-use/.env",
     "__HOME__/Code/whatsapp-mcp/whatsapp-bridge/store",
     "__HOME__/.automaster/chrome-profile"
   ],
   "marketplaces": [
     {
       "fonte": {
-        "repo": "JuliusBrussee/caveman",
-        "source": "github"
+        "path": "__HOME__/Code/calado",
+        "source": "directory"
       },
-      "nome": "caveman"
+      "nome": "calado"
     },
     {
       "fonte": {
@@ -30,31 +31,17 @@
     },
     {
       "fonte": {
-        "repo": "mksglu/context-mode",
-        "source": "github"
+        "path": "__HOME__/Code/reflect-mod",
+        "source": "directory"
       },
-      "nome": "context-mode"
+      "nome": "reflect-br"
     },
     {
       "fonte": {
-        "repo": "headroomlabs-ai/headroom",
+        "repo": "zenbu-labs/terminal-browser",
         "source": "github"
       },
-      "nome": "headroom-marketplace"
-    },
-    {
-      "fonte": {
-        "repo": "openai/codex-plugin-cc",
-        "source": "github"
-      },
-      "nome": "openai-codex"
-    },
-    {
-      "fonte": {
-        "repo": "DietrichGebert/ponytail",
-        "source": "github"
-      },
-      "nome": "ponytail"
+      "nome": "terminal-browser"
     },
     {
       "fonte": {
@@ -71,59 +58,19 @@
       "versao": "0.18.0"
     },
     {
-      "id": "caveman@caveman",
+      "id": "calado@calado",
       "ligado": true,
-      "versao": "0d95a81d35a9"
+      "versao": "0.1.0"
     },
     {
-      "id": "code-review@claude-plugins-official",
-      "ligado": false,
-      "versao": "2a8ad9f74633"
-    },
-    {
-      "id": "headroom@headroom-marketplace",
+      "id": "reflect-mod@reflect-br",
       "ligado": true,
-      "versao": "0.31.0"
+      "versao": "3.3.0"
     },
     {
-      "id": "playwright@claude-plugins-official",
-      "ligado": false,
-      "versao": "2a8ad9f74633"
-    },
-    {
-      "id": "ponytail@ponytail",
+      "id": "terminal-browser@terminal-browser",
       "ligado": true,
-      "versao": "4.8.4"
-    },
-    {
-      "id": "pyright-lsp@claude-plugins-official",
-      "ligado": false,
-      "versao": "1.0.0"
-    },
-    {
-      "id": "security-guidance@claude-plugins-official",
-      "ligado": true,
-      "versao": "2.0.8"
-    },
-    {
-      "id": "stripe@claude-plugins-official",
-      "ligado": false,
-      "versao": "0.10.3"
-    },
-    {
-      "id": "superpowers@claude-plugins-official",
-      "ligado": true,
-      "versao": "6.4.1"
-    },
-    {
-      "id": "swift-lsp@claude-plugins-official",
-      "ligado": false,
-      "versao": "1.0.0"
-    },
-    {
-      "id": "typescript-lsp@claude-plugins-official",
-      "ligado": false,
-      "versao": "1.0.0"
+      "versao": "0.0.2"
     },
     {
       "id": "watch@claude-video",
@@ -138,9 +85,9 @@
       "versao": "v26.5.0"
     },
     {
-      "instalar": "npm install --prefix \"$HOME/.local/share/vesta-interface/mcp\" --no-audit --no-fund --save-exact @playwright/mcp@0.0.82 chrome-devtools-mcp@1.10.1",
+      "instalar": "npm install --prefix \"$HOME/.local/share/vesta-interface/mcp\" --no-audit --no-fund --save-exact @playwright/mcp@0.0.82",
       "nome": "mcp-navegador",
-      "versao": "Version 0.0.82\n1.10.1"
+      "versao": "Version 0.0.82"
     },
     {
       "instalar": "brew install python@3.13",
@@ -180,17 +127,12 @@
     {
       "instalar": "npm install -g @nanonets/graft || npm install -g --prefix ~/.local @nanonets/graft",
       "nome": "graft",
-      "versao": "0.21.1"
+      "versao": "0.23.1"
     },
     {
       "instalar": "curl -fsSL https://raw.githubusercontent.com/vshulcz/deja-vu/main/install.sh | sh",
       "nome": "deja",
       "versao": "deja 0.21.2"
-    },
-    {
-      "instalar": "uv tool install headroom-ai",
-      "nome": "headroom-ai",
-      "versao": "headroom, version 0.32.1"
     },
     {
       "instalar": "uv tool install 'scrapling[ai]'",
@@ -208,14 +150,19 @@
       "versao": "0.10.8"
     },
     {
+      "instalar": "brew install --cask terminal-browser",
+      "nome": "terminal-browser",
+      "versao": "terminal-browser v0.13.4"
+    },
+    {
       "instalar": "brew install --cask luccas-silveira/knobler/knobler",
       "nome": "knobler",
-      "versao": "0.36.0"
+      "versao": "0.37.0"
     },
     {
       "instalar": "curl -fsSL https://claude.ai/install.sh | bash",
       "nome": "claude",
-      "versao": "2.1.286 (Claude Code)"
+      "versao": "2.1.326 (Claude Code)"
     }
   ],
   "repositorios": [
@@ -238,6 +185,21 @@
       "caminho": "__HOME__/Code/vesta-interface",
       "depois": "",
       "remote": "https://github.com/luccas-silveira/vesta-interface.git"
+    },
+    {
+      "caminho": "__HOME__/Code/calado",
+      "depois": "",
+      "remote": "https://github.com/luccas-silveira/calado.git"
+    },
+    {
+      "caminho": "__HOME__/Code/reflect-mod",
+      "depois": "",
+      "remote": "https://github.com/luccas-silveira/reflect-mod.git"
+    },
+    {
+      "caminho": "__HOME__/Code/video-use",
+      "depois": "uv sync",
+      "remote": "https://github.com/browser-use/video-use"
     },
     {
       "caminho": "__HOME__/claude-code-otel",

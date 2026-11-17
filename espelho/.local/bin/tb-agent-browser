@@ -1,0 +1,6 @@
+#!/bin/sh
+# terminal-browser monta o socket do agent-browser em ~/.local/state/..., e o caminho
+# passa do limite de 103 bytes do macOS com este $HOME. Diretório curto contorna.
+export AGENT_BROWSER_SOCKET_DIR=/tmp/tb-ab
+mkdir -m 700 -p "$AGENT_BROWSER_SOCKET_DIR"
+exec "$(dirname "$(readlink -f /opt/homebrew/bin/terminal-browser)")/../agent-browser/bin/agent-browser" "$@"

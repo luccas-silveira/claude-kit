@@ -21,7 +21,18 @@ curl -sf -m 1 -X POST "localhost:$PORT/ask" -d "$PAYLOAD" >/dev/null 2>&1 || exi
 
 DEADLINE=$(( $(date +%s) + 570 ))  # < timeout de 600s do hook, folga pro cancel
 while [ "$(date +%s)" -lt "$DEADLINE" ]; do
-    STATE="$(curl -sf -m 2 "localhost:$PORT/ask/$ID" 2>/dev/null)" || exit 0
+    # long-poll: o app segura o GET até a resposta (teto 25 s, nunca além do
+    # DEADLINE); app antigo ignora o header e responde na hora
+    WAIT=$(( DEADLINE - $(date +%s) )); [ "$WAIT" -gt 25 ] && WAIT=25; [ "$WAIT" -ge 1 ] || WAIT=1
+    STATE="$(curl -sf -m $((WAIT + 5)) -H "X-Knobler-Wait: $WAIT" "localhost:$PORT/ask/$ID" 2>/dev/null)"
+    RC=$?
+    if [ "$RC" -eq 28 ]; then
+        # timeout do curl conta o tempo do Mac dormindo e o prazo do app não:
+        # uma leitura sem espera separa "card ainda pendente" de "app travado"
+        STATE="$(curl -sf -m 2 "localhost:$PORT/ask/$ID" 2>/dev/null)" || exit 0
+    elif [ "$RC" -ne 0 ]; then
+        exit 0
+    fi
     if [ "$(printf '%s' "$STATE" | jq -r '.cancelled // false')" = "true" ]; then
         exit 0  # ✕ no card → pergunta vai pro terminal
     fi

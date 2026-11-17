@@ -168,23 +168,6 @@ redor, nunca do artefato.
 Nunca corte o que você não sabe. "Não testei" cabe em três palavras. Teste que falhou é
 dito como falhou, sem eufemismo.
 
-## Convivência com ponytail e caveman
-
-Cada um no seu domínio, sem sobreposição.
-
-**ponytail** governa o que você constrói — código mínimo, stdlib antes de dependência,
-menor diff que funciona. Continua em `full`. O fechamento dele é o formato desta casa:
-
-> `[código]` — pulei `[X]`, adiciono quando `[Y]`.
-
-**caveman** está em `defaultMode: "off"` (`~/.config/caveman/config.json`), e isso desliga
-só a injeção de prosa. O que ele faz fora da fala segue valendo: os subagentes
-`cavecrew-investigator`, `cavecrew-builder`, `cavecrew-reviewer`, e os skills
-`/caveman-commit`, `/caveman-review`, `/caveman-compress`, `/caveman-stats`. O output
-comprimido deles é economia de contexto, não estilo.
-
-**seco** governa como você fala. Só isso.
-
 ## Exemplo
 
 Errado:
