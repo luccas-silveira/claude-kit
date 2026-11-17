@@ -1,7 +1,7 @@
 {
   "programas": [
     {"nome": "node", "versao": "node --version", "instalar": "brew install node"},
-    {"nome": "mcp-navegador", "versao": "sh -c '\"$HOME/.local/share/vesta-interface/mcp/node_modules/.bin/playwright-mcp\" --version && \"$HOME/.local/share/vesta-interface/mcp/node_modules/.bin/chrome-devtools-mcp\" --version'", "instalar": "npm install --prefix \"$HOME/.local/share/vesta-interface/mcp\" --no-audit --no-fund --save-exact @playwright/mcp@0.0.82 chrome-devtools-mcp@1.10.1"},
+    {"nome": "mcp-navegador", "versao": "sh -c '\"$HOME/.local/share/vesta-interface/mcp/node_modules/.bin/playwright-mcp\" --version'", "instalar": "npm install --prefix \"$HOME/.local/share/vesta-interface/mcp\" --no-audit --no-fund --save-exact @playwright/mcp@0.0.82"},
     {"nome": "python@3.13", "versao": "python3.13 --version", "instalar": "brew install python@3.13"},
     {"nome": "uv", "versao": "uv --version", "instalar": "brew install uv"},
     {"nome": "jq", "versao": "jq --version", "instalar": "brew install jq"},
@@ -11,10 +11,10 @@
     {"nome": "yt-dlp", "versao": "yt-dlp --version", "instalar": "brew install yt-dlp"},
     {"nome": "graft", "versao": "graft --version", "instalar": "npm install -g @nanonets/graft || npm install -g --prefix ~/.local @nanonets/graft"},
     {"nome": "deja", "versao": "deja --version", "instalar": "curl -fsSL https://raw.githubusercontent.com/vshulcz/deja-vu/main/install.sh | sh"},
-    {"nome": "headroom-ai", "versao": "headroom --version", "instalar": "uv tool install headroom-ai"},
     {"nome": "scrapling", "versao": "scrapling --version", "instalar": "uv tool install 'scrapling[ai]'"},
     {"nome": "docker", "versao": "docker --version", "instalar": "brew install --cask docker"},
     {"nome": "supacode", "versao": "defaults read /Applications/supacode.app/Contents/Info CFBundleShortVersionString", "instalar": "brew install --cask supacode"},
+    {"nome": "terminal-browser", "versao": "terminal-browser --version", "instalar": "brew install --cask terminal-browser"},
     {"nome": "knobler", "versao": "defaults read /Applications/Knobler.app/Contents/Info CFBundleShortVersionString", "instalar": "brew install --cask luccas-silveira/knobler/knobler"},
     {"nome": "claude", "versao": "claude --version", "instalar": "curl -fsSL https://claude.ai/install.sh | bash"}
   ],
@@ -23,6 +23,9 @@
     {"caminho": "~/Code/whatsapp-mcp", "depois": "cd whatsapp-bridge && ./servico.sh"},
     {"caminho": "~/Code/vesta", "depois": ""},
     {"caminho": "~/Code/vesta-interface", "depois": ""},
+    {"caminho": "~/Code/calado", "depois": ""},
+    {"caminho": "~/Code/reflect-mod", "depois": ""},
+    {"caminho": "~/Developer/video-use", "destino": "~/Code/video-use", "depois": "uv sync"},
     {"caminho": "~/claude-code-otel", "depois": "docker compose up -d"},
     {"caminho": "~/Documents/2. ZOI/ghl-docs", "destino": "~/Code/ghl-docs", "depois": ""}
   ],
@@ -30,6 +33,7 @@
     "~/.config/zoi",
     "~/.config/watch/.env",
     "~/.config/gh/hosts.yml",
+    "~/Developer/video-use/.env",
     "~/Code/whatsapp-mcp/whatsapp-bridge/store",
     "~/.automaster/chrome-profile"
   ]

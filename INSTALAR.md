@@ -127,8 +127,7 @@ Troque o caminho do home por `~`.
 ## 6. Verificação
 
 Rode os dois blocos. A instalação só está pronta quando o primeiro imprime `OK` e o segundo
-mostra `Connected` para `chrome-devtools`, `deja`, `graft`, `inspo`, `playwright`, `scrapling`
-e `whatsapp`.
+mostra `Connected` para `deja`, `graft`, `inspo`, `playwright`, `scrapling` e `whatsapp`.
 
 ```bash
 cd ~/claude-kit && PATH="$PATH:$HOME/.local/bin:/opt/homebrew/bin" python3 - <<'PY'

@@ -41,24 +41,26 @@ Se você quer só uma peça, pegue a pasta dela em `espelho/.claude/` e copie à
 
 | Skill | Pra quê |
 |---|---|
-| `archify` | Diagramas de arquitetura, fluxo e sequência em HTML com SVG. |
-| `deja-history` + `/deja` | Busca em sessões passadas de agentes de código ("já não corrigimos isso?"). |
 | `ghl-api-docs` | Referência offline da API do GoHighLevel v3, com correções medidas ao vivo. |
 | `graft` | Usa o grafo de código do graft antes de grep e leitura de arquivo. |
 | `grill-me` | Entrevista cerrada sobre um plano até cada decisão estar resolvida. |
+| `hyperframes`, `hyperframes-cli`, `hyperframes-registry` | Vídeo a partir de HTML: as regras de render, a linha de comando e cerca de 450 blocos prontos. |
+| `media-use` | Música, efeito sonoro, imagem, locução e transcrição para um vídeo HyperFrames. |
 | `prompt-engineering` | Escreve e audita system prompts de agentes. |
+| `reverse-any-video`, `style-sampling` | Reconstrói um vídeo existente como projeto editável; faz um episódio novo num estilo já provado. |
+| `reverse-engineer-anything` | Engenharia reversa de binário, app Electron, firmware e alvo de navegador com o REA. |
 | `supacode-cli`, `supacode-deeplinks` | Controla o Supacode pelo terminal ou por URL. |
+| `terminal-browser` | Navegador de verdade dentro do terminal, lado a lado com a conversa. |
 | `vesta-interface` | Desenha e revisa telas, páginas e componentes; camada de interface da Vesta. Link para o clone em `~/Code/vesta-interface` (repositório abaixo). |
+| `video-use` | Edita vídeo por conversa: transcreve, corta, colore e legenda. Link para o clone em `~/Code/video-use` (repositório abaixo). |
+| `what-have-I-done` + `/whid` | Lista por projeto tudo o que foi feito num dia nas sessões do Claude Code. |
 
 ### Plugins
 
-Ligados: `superpowers` (skills de processo: TDD, debugging, revisão), `security-guidance`,
-`caveman` (subagentes com saída comprimida), `ponytail` (a solução mais simples que
-funciona), `watch` (assistir vídeo), `headroom` (compressão de contexto), `automaster`
-(auditoria e edição de GoHighLevel).
-
-Instalados e desligados: `code-review`, `pyright-lsp`, `typescript-lsp`, `swift-lsp`, `stripe`,
-`playwright` (substituído pelo MCP `playwright` travado, abaixo).
+Todos ligados: `automaster` (auditoria e edição de GoHighLevel), `calado` (troca a instrução de
+narrar entre ferramentas por uma regra contra narração), `reflect-mod` (acha correções
+reutilizáveis no que você digita e salva no `CLAUDE.md` com uma tecla), `terminal-browser`
+(navegador dentro do Claude Code) e `watch` (assistir vídeo).
 
 Os plugins se instalam sozinhos na primeira vez que você abre o Claude Code depois do
 instalador.
@@ -67,13 +69,12 @@ instalador.
 
 | Servidor | Pra quê |
 |---|---|
-| `deja` | Índice das sessões passadas. |
+| `deja` + `/deja` | Índice das sessões passadas ("já não corrigimos isso?"). |
 | `graft` | Grafo de símbolos e chamadas do repositório. |
 | `scrapling` | Scraping de páginas, inclusive as protegidas. |
 | `whatsapp` | Ler e enviar mensagens pelo WhatsApp (ponte local do `whatsapp-mcp`). |
-| `inspo` | Referências de design (`inspomcp.dev`). |
+| `inspo` + `/inspo` | Referências de design (`inspomcp.dev`). |
 | `playwright` | Navegador sem janela, com perfil fixo em `~/.cache/claude-navegador`. Travado em `@playwright/mcp@0.0.82`, com `--snapshot-mode none`. |
-| `chrome-devtools` | DevTools do Chrome sem janela (console, desempenho). Travado em `chrome-devtools-mcp@1.10.1`, com as categorias input, emulation, network e memory desligadas. |
 
 ### Hooks
 
@@ -83,13 +84,16 @@ instalador.
 | `session-length` | a cada mensagem | Avisa uma vez quando a sessão passa de 50 pedidos. |
 | `fechar-navegador-orfao` | fim da sessão | Fecha o navegador sem janela do Playwright que ficou aberto sozinho. |
 | `knobler-ask` | pergunta ao usuário | Manda a pergunta para o app Knobler e devolve a resposta. |
+| `trava_encerramento` | fim de cada resposta | Um juiz (Haiku, via `claude -p`) lê a última mensagem e não deixa o Claude parar com ponta solta que ele mesmo resolve. Barra no máximo duas vezes por pedido e, se falhar, libera. |
 
-Mais a statusline (`statusline.sh`) e o agente `web-search-agent` para pesquisa na web.
+Mais a statusline (`statusline.sh`), o tema `destaque-branco` e o agente `web-search-agent` para
+pesquisa na web.
 
 ### Programas
 
 Via Homebrew: `node`, `python@3.13`, `uv`, `jq`, `gh`, `go`, `ffmpeg`, `yt-dlp`, `docker`,
-`supacode`, `knobler`. Via npm: `graft` e os pacotes dos MCPs `playwright` e `chrome-devtools`. Via uv: `headroom-ai`, `scrapling`. Script oficial:
+`supacode`, `knobler`, `terminal-browser`. Via npm: `graft` e o pacote do MCP `playwright`. Via
+uv: `scrapling`. Script oficial:
 `deja` e o próprio Claude Code.
 
 O instalador só instala o que falta, na versão mais nova. Se a versão de lá for diferente da
@@ -104,6 +108,9 @@ Cada repositório é clonado em `~/Code/<nome>`:
 | `zoi-tech/automaster` | Servidor do plugin `automaster`. |
 | `luccas-silveira/vesta` | A skill `vesta` e seus comandos, ligados por link ao clone. A cada parada, a Vesta confere se há versão nova aqui e se atualiza. |
 | `luccas-silveira/vesta-interface` | A skill `vesta-interface`, ligada por link ao clone, com o detector de interface e os catálogos. Se atualiza junto com a Vesta, a cada parada. |
+| `luccas-silveira/calado` | O plugin `calado`. |
+| `luccas-silveira/reflect-mod` | O plugin `reflect-mod`. |
+| `browser-use/video-use` | A skill `video-use`, ligada por link ao clone; o instalador roda `uv sync` nele. A transcrição pede uma chave da ElevenLabs em `.env`. |
 | `luccas-silveira/whatsapp-mcp` | Ponte do WhatsApp usada pelo MCP `whatsapp`; o `servico.sh` compila e liga como serviço do macOS, que sobe no login e volta sozinho quando cai. |
 | `luccas-silveira/ghl-docs` | Espelho da documentação do GoHighLevel. |
 | `ColeMurray/claude-code-otel` | Métricas do Claude Code em Grafana; sobe com `docker compose`. |

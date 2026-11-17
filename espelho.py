@@ -19,7 +19,7 @@ GERENCIADOS = [
     '.claude/agents', '.claude/commands', '.claude/output-styles', '.claude/hooks',
     '.claude/helpers', '.claude/plugins/local', '.claude/plugins/config.json',
     '.claude/plugins/blocklist.json', '.mcp.json', '.config/deja', '.config/caveman',
-    '.config/yt-dlp',
+    '.config/yt-dlp', '.claude/themes', '.local/bin/tb-agent-browser',
 ]
 EXCLUIR_NOME = {'__pycache__', '.DS_Store', 'node_modules', '.git'}
 EXCLUIR_REL = {'.claude/CLAUDE.md', '.claude/memory', '.claude/skills/synced',

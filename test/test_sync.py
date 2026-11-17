@@ -12,6 +12,7 @@ GERENCIADOS = [
     '.claude/hooks/h.sh', '.claude/helpers/u.py', '.claude/plugins/local/p/plugin.json',
     '.claude/plugins/config.json', '.claude/plugins/blocklist.json', '.mcp.json',
     '.config/deja/config.toml', '.config/caveman/c.json', '.config/yt-dlp/config',
+    '.claude/themes/t.json', '.local/bin/tb-agent-browser',
 ]
 FORA = [
     '.claude/CLAUDE.md', '.claude/memory/general.md', '.claude/skills/synced/s/SKILL.md',
